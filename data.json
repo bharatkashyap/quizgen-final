@@ -1,0 +1,20 @@
+{
+  "title" : "TQC Meet",
+
+  "day" : "Thursday, 17/11/2016",
+
+  "rules":
+  [
+    {"rule" : "Infinte pounce, followed by bounce"},
+    {"rule" : "+10/-5 on pounce, +10/0 on bounce"},
+    {"rule" : "Question setter's discretion is paramount"}
+  ],
+
+  "questions":
+  [
+    { "question" : "Similar to <em>\"Ab ki baar, Modi Sarkaar\"</em> in 2014, the Bharatiya Janta Party's campaign slogan in 1996 was <em>\"Abki baari,</em> &lowbar;&lowbar;&lowbar;&lowbar; ______.\" <br/> Simply fill in the blank.",
+      "answer" : "<em>Sabko dekha baari baari, abki baari Atal Bihari</em",
+      "answerImg" : "media\\1exp.jpg"
+    }
+  ]
+}
