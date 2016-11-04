@@ -14,7 +14,13 @@ A list of dependencies of this project can be seen through *package.json*
 
 * Download this repository using the Download -> **Download ZIP** option on the top right
 
-* Extract, navigate to *quizgen-final-master* and install all dependencies using :
+* Extract to *quizgen-final-master*; open up the terminal and navigate to it
+
+````
+cd Desktop/quizgen-final-master
+````
+
+* Install all dependencies using :
 
 ```
 npm install
