@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bharatkashyap/quizgen-finals.git"
+    "url": "git+https://github.com/bharatkashyap/quizgen-final.git"
   },
   "keywords": [
     "quiz"
@@ -21,7 +21,7 @@
   "author": "Bharat Kashyap",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/bharatkashyap/quizgen-finals/issues"
+    "url": "https://github.com/bharatkashyap/quizgen-final/issues"
   },
-  "homepage": "https://github.com/bharatkashyap/quizgen-finals#readme"
+  "homepage": "https://github.com/bharatkashyap/quizgen-final#readme"
 }
