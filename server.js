@@ -1,13 +1,15 @@
 var express = require("express");
+var path = require('path');
 var app = express();
 
-app.use(express.static(__dirname + "/View"));
 
-app.use(express.static(__dirname + "/Script"));
+app.use(express.static(path.join(__dirname , "/View")));
 
-app.use(express.static(__dirname + "/Data"));
+app.use(express.static(path.join(__dirname , "/Script")));
 
-app.use(express.static(__dirname + "/Media"))
+app.use(express.static(path.join(__dirname , "/Data")));
+
+app.use(express.static(path.join(__dirname , "/Media")));
 
 
 app.get('/', function(req, res)
