@@ -1,0 +1,27 @@
+{
+  "name": "quizgen",
+  "version": "1.0.0",
+  "description": "Build grid based rounds of quizzes without the hassle ",
+  "main": "server.js",
+  "dependencies": {
+    "express": "^4.14.0",
+    "xmlhttprequest": "^1.8.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bharatkashyap/quizgen-finals.git"
+  },
+  "keywords": [
+    "quiz"
+  ],
+  "author": "Bharat Kashyap",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bharatkashyap/quizgen-finals/issues"
+  },
+  "homepage": "https://github.com/bharatkashyap/quizgen-finals#readme"
+}
