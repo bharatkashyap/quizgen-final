@@ -19,17 +19,15 @@ A list of dependencies of this project can be seen through *package.json*
 * ````
     npm install
   ````
-
 * Then, run the application using :
 
 * ````
     node server.js
   ````
-
 * Finally, open up your browser to :
 
 * ````
     localhost:8000
   ````
-  
+
 * Add your own stuff to *data.json* and modify as required
