@@ -4,7 +4,7 @@ html, body
   width : 100%;
   margin : 0;
   padding : 0;
-  font-family : 'Pontano Sans', sans-serif;
+  font-family : 'Pontano Sans', serif;
   -webkit-font-smoothing : antialiased;
 }
 
@@ -166,7 +166,7 @@ button:hover, button:focus
   left : 50%;
   transform : translateX(-50%);
   width : 40%;
-  height : 20%; 
+  height : 20%;
 }
 
 #viewAns, #returnGrid
