@@ -16,18 +16,14 @@ A list of dependencies of this project can be seen through *package.json*
 
 * Extract, navigate to *quizgen-final-master* and install all dependencies using :
 
-* ````
-    npm install
-  ````
+* `npm install`
+
 * Then, run the application using :
 
-* ````
-    node server.js
-  ````
+* `node server.js`
+
 * Finally, open up your browser to :
 
-* ````
-    localhost:8000
-  ````
+* `localhost:8000`
 
 * Add your own stuff to *data.json* and modify as required
