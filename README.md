@@ -1,4 +1,4 @@
-# Quizgen-finals
+# Quizgen - Final
 
 Creating a standard, grid-like format for final rounds of quizzes instead of having to make bulky, irritating powerpoint presentations.
 
