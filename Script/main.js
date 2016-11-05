@@ -1,4 +1,3 @@
-//var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var xhr = new XMLHttpRequest();
 
 xhr.onreadystatechange = function()
@@ -88,7 +87,7 @@ function loadQuestion(object)
     var grid = document.getElementById("gridfield");
     grid.style.display = "none"; //Hide question grid
 
-    event.target.style.opacity = 0.3; //Semi-hide question to show it has been used
+    var cell = event.target; //Get cell containing question number
 
     var container = document.createElement("DIV");
     container.id = "questionfield";
@@ -127,6 +126,8 @@ function loadQuestion(object)
       var answer = document.createElement("DIV");
       answer.id = "answer";
       answer.innerHTML = object.answer; //Div for answer content
+
+      cell.style.opacity = 0.3; //Semi-hide question to show it has been used
 
       var answerImg = document.createElement("IMG");
       answerImg.id = "answerImg";
