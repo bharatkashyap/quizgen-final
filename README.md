@@ -12,7 +12,7 @@ A list of dependencies of this project can be seen through *package.json*
 
 * If you do not have Node.js installed, install it from [here](https://www.nodejs.org)
 
-* Download this repository using the Download -> **Download ZIP** option on the top right
+* Download this repository using the Clone or download -> **Download ZIP** option on the top right
 
 * Extract to *quizgen-final-master*; open up the terminal and navigate to it
 
