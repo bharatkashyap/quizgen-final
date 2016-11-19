@@ -46,4 +46,4 @@ localhost:8000
 
 * Add your own stuff to *data.json* and modify as required
 
-* Final result should resemble something like (this)[https://bharatkashyap.github.io/quizzes/17nov16/View]
+* Final result should resemble something like [this](https://bharatkashyap.github.io/quizzes/17nov16/View)
