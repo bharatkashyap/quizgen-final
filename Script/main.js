@@ -121,27 +121,34 @@ function loadQuestion(object)
     viewAns.id = "viewAns";
     viewAns.innerHTML = "View answer";
 
-    viewAns.onclick = function()
+     viewAns.onclick = function()
     {
       var answer = document.createElement("DIV");
       answer.id = "answer";
-      answer.innerHTML = object.answer; //Div for answer content
+      if(object.answer)
+         answer.innerHTML = object.answer; //Div for answer content
+      else
+         answer.innerHTML = ""; //Fill answer with blank text
 
       cell.style.opacity = 0.3; //Semi-hide question to show it has been used
 
-      var answerImg = document.createElement("IMG");
-      answerImg.id = "answerImg";
-      answerImg.src = object.answerImg; //Div for answer resource image
-
+      if(object.answerImg)
+      {
+        var answerImg = document.createElement("IMG");
+        answerImg.id = "answerImg";
+        answerImg.src = object.answerImg; //Div for answer resource image
+      }
       container.removeChild(question); //Remove question from questionfield
       controls.removeChild(viewAns); //Remove view answer button from controls div but keep return to grid button
 
       container.appendChild(answer);
-      container.appendChild(answerImg);
+         
+      if(answerImg)
+        container.appendChild(answerImg);
+         
       container.appendChild(controls); ///Append answerimage, answer and control buttons divisions to questionfield
 
     }
-
 
     controls.appendChild(viewAns);
     controls.appendChild(returnGrid); //Append control buttons to controls division
