@@ -46,4 +46,4 @@ localhost:8000
 
 * Add your own stuff to *data.json* and modify as required
 
-* Build quizzes like [theses](https://bharatkashyap.github.io/quizzes/17nov16/View)
+* Build quizzes like [these](https://bharatkashyap.github.io/quizzes/17nov16/View)
