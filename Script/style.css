@@ -12,6 +12,7 @@ html, body
 {
   height : 100%;
   width : 100%;
+  background-color : #FFF;
 }
 
 button
@@ -176,5 +177,36 @@ button:hover, button:focus
   width : 70%;
   margin-bottom : 1%;
   font-size : 1em;
+}
 
+#access
+{
+  position : relative;
+  left : 45%;
+  margin-top : 5%;
+  border-radius : 60%;
+}
+
+/* Inversion */
+
+.invert
+{
+  background-color : #000;
+  color : #FFF;
+}
+
+.invert #meta span
+{
+  color : rgba(255,255,255,0.7);
+}
+
+.invert button
+{
+  background: rgba(255,255,255,0.9);
+  color : rgba(0,0,0,0.8);
+}
+
+.invert button:hover
+{
+  background : rgba(255,255,255,0.95);
 }

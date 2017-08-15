@@ -151,3 +151,9 @@ function loadQuestion(object)
     container.appendChild(controls); //Append question number, question content and control buttons to questionfield
 
   }
+
+function invert()
+{
+  document.getElementsByClassName("container")[0].classList.toggle("invert");
+  document.getElementsByClassName("container")[1].classList.toggle("invert");
+}
