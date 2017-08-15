@@ -1,23 +1,53 @@
 var xhr = new XMLHttpRequest();
 
 xhr.onreadystatechange = function()
-{
-    if (this.readyState == 4 && this.status == 200)
-    {
-      var data = JSON.parse(xhr.responseText);
+  {
+      if (this.readyState == 4 && this.status == 200)
+      {
+        var data = JSON.parse(xhr.responseText);
 
-      var title = data.title;
-      var day = data.day;
-      var rules = data.rules;
-      var questions = data.questions;
+        var title = data.feed.entry[0]["gsx$title"]["$t"];
+        var day = data.feed.entry[0]["gsx$date"]["$t"];
 
-      showMeta(title, day, rules);
-      populateTable(questions);
-    }
-}
+        var rules = new Array();
+        for(var i = 0; i < data.feed.entry.length; i++)
+        {
+          if(!(data.feed.entry[i]["gsx$rules"]["$t"]) == "")
+            rules.push(data.feed.entry[i]["gsx$rules"]["$t"]);
+        }
 
-xhr.open("GET", "data.json", true);
+
+        var questions = new Array();
+        for(var i = 0; i < data.feed.entry.length; i++)
+          questions.push(data.feed.entry[i]["gsx$questions"]["$t"]);
+
+        var questions_media = new Array();
+        for(var i = 0; i < data.feed.entry.length; i++)
+          questions_media.push(data.feed.entry[i]["gsx$questionsmedia"]["$t"]);
+
+        var answers = new Array();
+        for(var i = 0; i < data.feed.entry.length; i++)
+          answers.push(data.feed.entry[i]["gsx$answers"]["$t"]);
+
+        var answers_media = new Array();
+        for(var i = 0; i < data.feed.entry.length; i++)
+          answers_media.push(data.feed.entry[i]["gsx$answersmedia"]["$t"]);
+
+        var answers_descr = new Array();
+        for(var i = 0; i < data.feed.entry.length; i++)
+          answers_descr.push(data.feed.entry[i]["gsx$answersdescription"]["$t"]);
+
+        showMeta(title, day, rules);
+        populateTable(questions, questions_media, answers, answers_media, answers_descr);
+      }
+
+  }
+
+
+xhr.open("GET", "https://spreadsheets.google.com/feeds/list/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/od6/public/values?alt=json", true);
+  //xhr.open("GET", "data.json", true);
 xhr.send();
+
 
 function showMeta(title, day, rules)
   {
@@ -30,14 +60,14 @@ function showMeta(title, day, rules)
       {
         var li = document.createElement("LI");
 
-        li.innerHTML = rules[i].rule;
+        li.innerHTML = rules[i];
 
         rulesList.appendChild(li);
       }
   } //Write rules from data into HTML
 
 
-function populateTable(questions)
+function populateTable(questions, questions_media, answers, answers_media, answers_descr)
   {
 
     var grid = document.getElementById("grid");
@@ -62,7 +92,14 @@ function populateTable(questions)
         cell.onclick = function()
         {
           var q = (event.target.innerHTML - 1);
-          loadQuestion(questions[q]);
+          var question_object = {
+            question: questions[q],
+            questionMedia: questions_media[q],
+            answer: answers[q],
+            answerMedia: answers_media[q],
+            answerDescr: answers_descr[q]
+          };
+          loadQuestion(question_object);
         };
 
       }
@@ -103,6 +140,13 @@ function loadQuestion(object)
     question.innerHTML = object.question;
     question.id = "question"; //Div for question content
 
+    if(!(object.questionMedia === ""))
+    {
+      var questionMedia = document.createElement("IMG");
+      questionMedia.id = "questionMedia";
+      questionMedia.src = object.questionMedia;
+    }
+
     var controls = document.createElement("DIV");
     controls.id = "controls"; //Div for buttons to handle further options
 
@@ -129,15 +173,21 @@ function loadQuestion(object)
 
       cell.style.opacity = 0.3; //Semi-hide question to show it has been used
 
-      var answerImg = document.createElement("IMG");
-      answerImg.id = "answerImg";
-      answerImg.src = object.answerImg; //Div for answer resource image
+      if(!(object.answerMedia === ""))
+      {
+        var answerMedia = document.createElement("IMG");
+        answerMedia.id = "answerMedia";
+        answerMedia.src = object.answerMedia; //Div for answer resource image
+      }
 
       container.removeChild(question); //Remove question from questionfield
+      if(questionMedia)
+        container.removeChild(questionMedia); //Remove question resource from questionfield
       controls.removeChild(viewAns); //Remove view answer button from controls div but keep return to grid button
 
       container.appendChild(answer);
-      container.appendChild(answerImg);
+      if(answerMedia)
+        container.appendChild(answerMedia);
       container.appendChild(controls); ///Append answerimage, answer and control buttons divisions to questionfield
 
     }
@@ -148,9 +198,12 @@ function loadQuestion(object)
 
     container.appendChild(quesNum);
     container.appendChild(question);
+    if(questionMedia)
+      container.appendChild(questionMedia);
     container.appendChild(controls); //Append question number, question content and control buttons to questionfield
 
   }
+
 
 function invert()
 {

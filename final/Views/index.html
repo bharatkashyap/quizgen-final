@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset = utf-8 name = viewport content = "width = device-width, initial-scale = 1">
+    <meta charset = utf-8 name = viewport content = "width = device-width, initial-scale = 1.0, user-scalable = no">
 
-    <title></title>
+    <title>Quizgen</title>
     <link rel = stylesheet href = style.css media = screen>
     <script src="https://use.fontawesome.com/64ef20be9f.js"></script>
     <script src = main.js charset = utf-8></script>
-    <link href = "https://fonts.googleapis.com/css?family=Pontano+Sans|Alegreya" rel = stylesheet>
+    <link href = "https://fonts.googleapis.com/css?family=Pontano+Sans|Nunito" rel = stylesheet>
   </head>
   <body>
 
@@ -24,13 +24,19 @@
       <ul id = rules>
       </ul>
 
-      <button id = start onclick = scrollToGrid()>Start</button>
+       <button id = start onclick = scrollToGrid()>Start</button>
       <br/>
       <button id = access onclick = invert()><i class = "fa fa-eye fa-fw fa-2x" aria-hidden = true></i>
       </button>
     </div>
 
+    <div id = footer>
+      <div id = branding>
 
+      </div>
+    </div>
+
+    </div>
   </div>
 
   <div class = container>
@@ -38,6 +44,7 @@
     <div id = gridfield>
       <table id = grid></table>
     </div>
+
 
   </div>
   </body>
