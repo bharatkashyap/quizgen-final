@@ -49,8 +49,9 @@ localhost:8000
 * Publish your sheet to the web and get your key, like so :
 ```
 https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/pubhtml?gd=0&single=true
-KEY = 1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k
 ```
+Thus, in this case, KEY = 1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k
+
 
 * Replace this line in the Main script file :
 ```javascript
