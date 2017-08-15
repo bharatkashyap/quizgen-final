@@ -50,7 +50,7 @@ localhost:8000
 ```
 https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/pubhtml?gd=0&single=true
 ```
-Thus, in this case, KEY = 1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k
+Therefore, in this case, KEY = 1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k
 
 
 * Replace this line in the Main script file :
