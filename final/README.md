@@ -3,7 +3,7 @@ Quizgen - Final
 
 Creating a standard, grid-like format for final rounds of quizzes instead of having to make bulky, irritating powerpoint presentations.
 
-Fetches data from a Google Spreadsheet (like [so](https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/edit#gid=0) ) and creates a simple, minimalistic yet immersive final round experience - built using pure Javascript; packaged as a Node + Express application for distributability.
+Fetches data from a Google Spreadsheet (like [so](https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/edit#gid=0)) and creates a simple, minimalistic yet immersive final round experience - built using pure Javascript; packaged as a Node + Express application for distributability.
 
 A list of dependencies of this project can be seen through *package.json*
 
