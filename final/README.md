@@ -3,16 +3,16 @@ Quizgen - Final
 
 Creating a standard, grid-like format for final rounds of quizzes instead of having to make bulky, irritating powerpoint presentations.
 
-Fetches data from a JSON file and creates a simple, minimalistic yet immersive final round experience - built using pure Javascript; packaged as a Node + Express application for distributability.
+Fetches data from a Google Spreadsheet (like [so](https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/edit#gid=0) and creates a simple, minimalistic yet immersive final round experience - built using pure Javascript; packaged as a Node + Express application for distributability.
 
 A list of dependencies of this project can be seen through *package.json*
 
 ***
-### Installing
+### Setting up
 
 * If you do not have Node.js installed, install it from [here](https://www.nodejs.org)
 
-* Download this repository using either 
+* Download this repository using either
 
 ````
 git clone https://github.com/bharatkashyap/quizgen-final.git
@@ -44,6 +44,17 @@ node server.js
 localhost:8000
 ```
 
-* Add your own stuff to *data.json* and modify as required
+* Create your own sheet like the one I've linked to up top
+
+* Publish your sheet to the web and get your key, like so :
+```
+https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/pubhtml?gd=0&single=true
+KEY = 1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k
+```
+
+* Replace this line in the Main script file :
+```javascript
+xhr.open("GET", "https://spreadsheets.google.com/feeds/list/YOUR-KEY-HERE/od6/public/values?alt=json", true);
+```
 
 * Build quizzes like [these](https://bharatkashyap.github.io/quizzes/17nov16/View)
