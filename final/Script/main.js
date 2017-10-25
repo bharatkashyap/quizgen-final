@@ -54,6 +54,7 @@ function createQuiz(response)
         var access = document.getElementById("access");
         access.disabled = false;
 
+
   }
 
 

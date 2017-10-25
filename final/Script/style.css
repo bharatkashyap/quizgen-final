@@ -15,20 +15,34 @@ html, body
 
 .init {
   position: absolute;
-  left: 40%;
-  top: 10%;
-  width: 20%;
+  left: 35%;
+  top: 7%;
+  width: 30%;
   opacity: 1;
   transition: opacity 1s ease-in-out;
   -webkit-transition: opacity 1s ease-in-out;
   -moz-transition: opacity 1s ease-in-out;
   -ms-transition: opacity 1s ease-in-out;
   -o-transition: opacity 1s ease-in-out;
+  z-index: 20000;
+}
+
+
+.video {
+  position: fixed;
+  top: 50%; left: 50%;
+  z-index: -1;
+  opacity: 0.3;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translate(-50%, -50%);
 }
 
 .init > #heading
 {
-  margin-bottom: 25%;
+  margin-bottom: 20%;
   text-align: center;
   font-variant: small-caps;
   font-size: 2.8em;
@@ -57,6 +71,15 @@ html, body
   bottom: 0;
 }
 
+.init > ul{
+  font-family: 'Roboto Mono';
+  font-size: 0.9em;
+  position: absolute;
+  top: 120%;
+  width: 100%;
+  display: block;
+}
+
 .success-hide
 {
   opacity: 0;
@@ -68,6 +91,7 @@ html, body
   width : 100%;
   background-color : #FFF;
   overflow: auto;
+  z-index: 20000;
 }
 
 button
@@ -98,6 +122,7 @@ button:hover, button:focus
   -moz-transition: opacity 1s ease-in;
   -ms-transition: opacity 1s ease-in;
   -o-transition: opacity 1s ease-in;
+  z-index: 20000;
 }
 
 .success-show
@@ -217,6 +242,7 @@ input[type="text"]
   top : 30%;
   transform: translateY(-30%);
   width : 100%;
+  z-index: 20000;
 }
 
 #grid
@@ -226,6 +252,7 @@ input[type="text"]
   text-align : center;
   border-collapse : collapse;
   font-size : 1.5em;
+  z-index: 20000;
 }
 
 #grid td
@@ -263,6 +290,7 @@ input[type="text"]
 {
   position : relative;
   top : 10%;
+  z-index: 200000;
 }
 
 #question, #controls, #answer
@@ -270,6 +298,7 @@ input[type="text"]
   margin : 5% auto;
   width : 60%;
   text-align : center;
+  z-index: 200000;
 }
 
 #question
@@ -290,6 +319,7 @@ input[type="text"]
 {
   font-size : 1.4em;
   font-family : 'Nunito', sans-serif;
+  z-index: 200;
 }
 
 #questionMedia, #answerMedia
@@ -299,6 +329,7 @@ input[type="text"]
   transform : translateX(-50%);
   width : 40%;
   height : 20%;
+  z-index: 200;
 }
 
 #viewAns, #returnGrid
@@ -308,6 +339,7 @@ input[type="text"]
   width : 70%;
   margin-bottom : 1%;
   font-size : 1em;
+  z-index: 200;
 }
 
 #access
