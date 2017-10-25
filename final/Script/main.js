@@ -225,7 +225,7 @@ function loadQuestion(object)
 
   function createSpreadsheetLink(docsLink){
     var spreadsheetKey = getKey(docsLink);
-    var spreadsheetLink = "http://spreadsheets.google.com/feeds/list/" + spreadsheetKey + "/od6/public/values?alt=json&";
+    var spreadsheetLink = "https://spreadsheets.google.com/feeds/list/" + spreadsheetKey + "/od6/public/values?alt=json";
     return spreadsheetLink
   }//Get JSON output link
 

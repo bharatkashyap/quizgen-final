@@ -3,9 +3,11 @@ Quizgen - Final
 
 Creating a standard, grid-like format for final rounds of quizzes instead of having to make bulky, irritating powerpoint presentations.
 
-Fetches data from a Google Spreadsheet (like [so](https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/edit#gid=0)) and creates a simple, minimalistic yet immersive final round experience - built using pure Javascript; packaged as a Node + Express application for distributability.
+Fetches data from a Google Spreadsheet (like [so](https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/edit#gid=0)) and creates a simple, minimalistic yet immersive final round experience - built using pure Javascript. Packaged as Node/Express to be able to run locally.
 
-A list of dependencies of this project can be seen through *package.json*
+***
+## Update
+Live [here](https://quizgen-final.firebaseapp.com/). Instructions for local run follow.
 
 ***
 ### Setting up
@@ -46,15 +48,6 @@ localhost:8000
 
 * Create your own sheet like the one I've linked to up [top](https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/edit#gid=0)
 
-* Publish your sheet to the web and get your key, like so :
-```
-https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/pubhtml?gd=0&single=true
-```
-thus, in this case, KEY = 1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k
+* Publish your sheet to the web and enter that URL into the text field, and we should be up!
 
-* Replace this line in the Main script file :
-```javascript
-xhr.open("GET", "https://spreadsheets.google.com/feeds/list/YOUR-KEY-HERE/od6/public/values?alt=json", true);
-```
-
-* Build quizzes like [these](https://bharatkashyap.github.io/quizzes/17nov16/View)
+* Build quizzes like [this one](https://bharatkashyap.github.io/quizzes/17nov16/View) and also [this one](https://quizgen-final.firebaseapp.com/?sheet=https://docs.google.com/spreadsheets/d/1W4A4rrA812qtynqrU3Y4iYQrFrizoAe8WezAw0wviEg/edit#gid=0)
