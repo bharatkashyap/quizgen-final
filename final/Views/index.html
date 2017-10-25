@@ -11,6 +11,13 @@
   </head>
   <body>
 
+  <div class="init">
+    <h1 id=heading>Quizgen</h1>
+    <input id="spreadsheet" type="text" placeholder="Google Sheet URL"></input>
+    <button type="button" name="button" onclick="makeXHR(createQuiz);">Quiz</button>
+    <video src="demo.webm"></video>
+  </div>
+
   <div class = container>
 
     <div id = splash>
@@ -24,9 +31,9 @@
       <ul id = rules>
       </ul>
 
-       <button id = start onclick = scrollToGrid()>Start</button>
+       <button id = start disabled onclick = scrollToGrid()>Start</button>
       <br/>
-      <button id = access onclick = invert()><i class = "fa fa-eye fa-fw fa-2x" aria-hidden = true></i>
+      <button id = access disabled onclick = invert()><i class = "fa fa-eye fa-fw fa-2x" aria-hidden = true></i>
       </button>
     </div>
 
@@ -39,7 +46,7 @@
     </div>
   </div>
 
-  <div class = container>
+  <div class = "container hide-init">
 
     <div id = gridfield>
       <table id = grid></table>

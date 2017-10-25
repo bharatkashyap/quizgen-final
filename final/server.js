@@ -13,6 +13,7 @@ app.use(express.static(path.join(__dirname , "/Media")));
 
 
 
+
 app.use(bodyParser.urlencoded({extended : false}));
 app.use(bodyParser.json());
 

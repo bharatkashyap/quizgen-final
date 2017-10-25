@@ -1,10 +1,6 @@
-var xhr = new XMLHttpRequest();
-
-xhr.onreadystatechange = function()
+function createQuiz(response)
   {
-      if (this.readyState == 4 && this.status == 200)
-      {
-        var data = JSON.parse(xhr.responseText);
+        var data = JSON.parse(response);
 
         var title = data.feed.entry[0]["gsx$title"]["$t"];
         var day = data.feed.entry[0]["gsx$date"]["$t"];
@@ -39,14 +35,29 @@ xhr.onreadystatechange = function()
 
         showMeta(title, day, rules);
         populateTable(questions, questions_media, answers, answers_media, answers_descr);
-      }
+
+
+        /* Make things visible/accessible on quizload */
+
+        var init = document.getElementsByClassName("init")[0];
+        init.className += " success-hide";
+
+        var splash = document.getElementById("splash");
+        splash.className += " success-show";
+
+        var containerBottom = document.getElementsByClassName("hide-init")[0];
+        containerBottom.className += " success-show";
+
+        var start = document.getElementById("start");
+        start.disabled = false;
+
+        var access = document.getElementById("access");
+        access.disabled = false;
 
   }
 
 
-xhr.open("GET", "https://spreadsheets.google.com/feeds/list/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/od6/public/values?alt=json", true);
-  //xhr.open("GET", "data.json", true);
-xhr.send();
+//xhr.open("GET", "http://spreadsheets.google.com/feeds/list/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/od6/public/values?alt=json", true);
 
 
 function showMeta(title, day, rules)
@@ -205,8 +216,48 @@ function loadQuestion(object)
   }
 
 
-function invert()
-{
-  document.getElementsByClassName("container")[0].classList.toggle("invert");
-  document.getElementsByClassName("container")[1].classList.toggle("invert");
-}
+  function getKey(string)
+  {
+    var key = new RegExp("/spreadsheets/d/([a-zA-Z0-9-_]+)");
+    return key.exec(string)[1];
+  } //Get sheet key
+
+  function createSpreadsheetLink(docsLink){
+    var spreadsheetKey = getKey(docsLink);
+    var spreadsheetLink = "http://spreadsheets.google.com/feeds/list/" + spreadsheetKey + "/od6/public/values?alt=json&";
+    return spreadsheetLink
+  }//Get JSON output link
+
+  function invert()
+  {
+    document.getElementsByClassName("container")[0].classList.toggle("invert");
+    document.getElementsByClassName("container")[1].classList.toggle("invert");
+  } //Colour-scheme
+
+  function makeXHR(callback){
+      var docsLink = document.getElementById("spreadsheet").value;
+      var xhr;
+      xhr = new XMLHttpRequest();
+
+      xhr.onreadystatechange = function(){
+          if (xhr.readyState == 4 && xhr.status == 200){
+              callback(xhr.responseText);
+          }
+      }
+
+      var spreadsheetLink = createSpreadsheetLink(docsLink);
+      xhr.open("GET", spreadsheetLink, true);
+      xhr.send();
+
+  }
+
+  function detectQuery(){
+    if(window.location.search)
+    {
+      document.getElementById("spreadsheet").value = window.location.search.split('=')[1];
+      makeXHR(createQuiz);
+    }
+
+  }
+
+  window.onload = detectQuery;
