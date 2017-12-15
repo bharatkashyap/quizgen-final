@@ -1,3 +1,5 @@
+var viewedQues = sessionStorage.getItem("viewedQues") ?  JSON.parse(sessionStorage.getItem("viewedQues")) :  [];// Session variable for viewed questions
+
 function createQuiz(response)
   {
         var data = JSON.parse(response);
@@ -104,6 +106,13 @@ function populateTable(questions, questions_media, answers, answers_media, answe
 
         cell.innerHTML = (i + 1);
 
+
+        if(viewedQues.length > 0)
+        {
+          if(viewedQues.indexOf(cell.innerHTML.toString()) > -1) //Marking viewed questions
+            cell.style.opacity = 0.3;
+        }
+
         cell.onclick = function()
         {
           var q = (event.target.innerHTML - 1);
@@ -115,6 +124,7 @@ function populateTable(questions, questions_media, answers, answers_media, answe
             answerDescr: answers_descr[q]
           };
           loadQuestion(question_object);
+
         };
 
       }
@@ -205,6 +215,7 @@ function loadQuestion(object)
         container.appendChild(answerMedia);
       container.appendChild(controls); ///Append answerimage, answer and control buttons divisions to questionfield
 
+      questionViewed(cell.innerHTML);
     }
 
 
@@ -217,6 +228,12 @@ function loadQuestion(object)
       container.appendChild(questionMedia);
     container.appendChild(controls); //Append question number, question content and control buttons to questionfield
 
+  }
+
+  function questionViewed(q) { // Storing viewed questions into sessionStorage
+    viewedQues.push(q.toString());
+    console.log(viewedQues);
+    sessionStorage.setItem("viewedQues", JSON.stringify(viewedQues));
   }
 
 
