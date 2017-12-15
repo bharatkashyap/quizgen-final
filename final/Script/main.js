@@ -45,7 +45,7 @@ function createQuiz(response)
         var splash = document.getElementById("splash");
         splash.className += " success-show";
 
-        var containerBottom = document.getElementsByClassName("hide-init")[0];
+        var containerBottom = document.getElementsByClassName("hide-init")[1];
         containerBottom.className += " success-show";
 
         var start = document.getElementById("start");
@@ -250,7 +250,49 @@ function loadQuestion(object)
       xhr.open("GET", spreadsheetLink, true);
       xhr.send();
 
+      var containerMiddle = document.getElementsByClassName("hide-init")[0];
+      containerMiddle.className += " success-show";
+
   }
+
+  var intervalFunc, index = 0;
+
+  function shuffleImages(){
+    intervalFunc = setInterval(nextImage, 2000);
+
+  var images = document.getElementsByClassName("slide");
+
+  function nextImage(){
+    modIndex = index%images.length;
+    if (images[modIndex].classList.contains('img-active'))
+    {
+      images[modIndex].classList.remove('img-active');
+      var nextIndex = (index+1)%images.length;
+      images[nextIndex].classList.add('img-active');
+    }
+    index++;
+  }
+}
+
+  function setSlideshowHeight(){
+    var slideshow = document.getElementById("slideshow");
+    var image = document.getElementsByTagName("img")[0];
+    var imgstyle = getComputedStyle(image, null);
+    var slideshowHeight = parseFloat(imgstyle.marginTop) + parseFloat(imgstyle.height);
+    slideshow.style.height = slideshowHeight + "px";
+    loadTutorial();
+  }
+
+  function loadTutorial(){
+    var tutorial = document.getElementsByClassName("tutorial")[0];
+    tutorial.classList.add("visible");
+    window.sr = ScrollReveal();
+    sr.reveal('.tut-1', {duration: 2000});
+    sr.reveal('.tut-2', {duration: 2000});
+    sr.reveal('.tut-3', {duration: 2000});
+    sr.reveal('.tut-4', {duration: 2000});
+}
+
 
   function detectQuery(){
     if(window.location.search)
@@ -258,7 +300,14 @@ function loadQuestion(object)
       document.getElementById("spreadsheet").value = window.location.search.split('=')[1];
       makeXHR(createQuiz);
     }
+  }
+
+  function onStart(){
+
+    detectQuery();
+    shuffleImages();
+    setSlideshowHeight();
 
   }
 
-  window.onload = detectQuery;
+  window.onload = onStart;

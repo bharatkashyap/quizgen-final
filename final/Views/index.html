@@ -1,82 +1,112 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset = utf-8 name = viewport content="initial-scale = 0.45">
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Quizgen</title>
-    <link rel = stylesheet href = style.css media = screen>
+    <link rel="stylesheet" href="style.css" media="screen">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
     <script src="https://use.fontawesome.com/64ef20be9f.js"></script>
-    <script src = "main.js" charset = utf-8></script>
-    <link href = "https://fonts.googleapis.com/css?family=Pontano+Sans|Nunito|Roboto+Mono" rel = stylesheet>
+
+    <script src="main.js" charset="utf-8"></script>
+    <script src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Pontano+Sans|Nunito|Roboto+Mono" rel = stylesheet>
   </head>
   <body>
 
-  <div class="init">
-    <h1 id=heading>Quizgen</h1>
-    <input id="spreadsheet" type="text" placeholder="Google Sheet URL"></input>
-    <button type="button" name="button" onclick="makeXHR(createQuiz);">Quiz</button>
-    <video class=video id="bgvid" playsinline autoplay muted loop>
-      <source src="https://raw.githubusercontent.com/bharatkashyap/quizgen-final/master/final/demo.webm" type="video/webm">
-    </video>
+<div class="init">
+    <div class="row">
+      <div class="col">
+        <h1 id="heading">Quizgen</h1>
+      </div>
+    </div>
 
-    <ul>
-      <li><strong>Host and share</strong> quizzes, using only Javascript (and Google Sheets, and the internet). </li>
-      <br/>
-      <li>Create a sheet containing the quiz<br/>(<strong>exactly like <a href="https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/edit#gid=0" target="_blank">so</a></strong>).</li>
-      <br/>
-      <li><strong>Publish the sheet to the web</strong>, and enter the URL above. </li>
-      <br/>
-      <li><strong>Share</strong> quizzes like <a href="https://quizgen-final.firebaseapp.com/?sheet=https://docs.google.com/spreadsheets/d/1W4A4rrA812qtynqrU3Y4iYQrFrizoAe8WezAw0wviEg/edit#gid=0" target="_blank">this!</a> (This is really quite exciting.)</li>
-      <br/>
-      <li><strong>Why?</strong>
-        <ol>
-          <li>Presentations break all the time, mid-quiz, for no reason at all.</li>
-          <li>Presentations are bulky and irritating.</li>
-          <li>Slideshare must surely be bettered as the only real quiz-sharing option.</li>
-        </ol>
-      </li>
-      <br/>
-      <li>Want to use this but can't figure out how to? Have used this and have suggestions? Hit <a href="http://facebook.com/bharattttttt" target="_blank">me</a> up.</li>
-      <br/>
-      <li>Project is <strong>maintained <a href="https://github.com/bharatkashyap/quizgen-final" target="_blank">here</a></strong>. Stars are appreciated!</li>
-    </ul>
+    <div class="row">
+      <div class="col">
+        <h1 id="subheading-maj">Host onsite quizzes online.</h1>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <h1 id="subheading-min" class="h5 text-muted">Linked directly to Google Sheets. Easier to make and share.</h1>
+      </div>
+    </div>
+
+    <div class="row input-field">
+      <div class="col align-self-center">
+        <input id="spreadsheet" type="text" placeholder="Google Sheet URL"></input>
+        <button type="button" name="button" onclick="makeXHR(createQuiz);">Quiz</button>
+      </div>
+    </div>
+  <!--  <video class=video id="bgvid" playsinline autoplay muted loop>
+      <source src="https://raw.githubusercontent.com/bharatkashyap/quizgen-final/master/final/demo.webm" type="video/webm">
+    </video> -->
+
+  <div id="slideshow">
+        <img src="quizgen.svg" class="slide img-active" alt="">
+        <img src="quizgen2.svg" class="slide" alt="">
   </div>
 
-  <div class = container>
+  <div class="row justify-content-center tutorial">
+    <div class="col tutorial-intro">
+      <h1 class="h3">Get started.</h1>
+    </div>
+    <div class="w-100"></div>
+    <div class="col-6 tut-elem tut-1">
+      <h4 class="tut-heading">Create a Google Sheet</h4>
+      <p class="tut-text">Duplicate <a href="https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/edit#gid=0" target="_blank"><strong>this</strong></a> sample sheet. It won't work if the format isn't <em>exactly</em> the same, so be careful. <br/><strong>Click on File, Publish to the Web.</strong></p>
+      <img src="tut1.png" class="tut-image" alt="">
+    </div>
+    <div class="w-100"></div>
+    <div class="col-6 tut-elem tut-2">
+      <h4 class="tut-heading">Publish to the Web</h4>
+      <p class="tut-text">Select the name of the sheet, and click on <strong>Publish</strong>.</p>
+      <img src="tut2.png" class="tut-image" alt="">
+    </div>
+    <div class="w-100"></div>
+    <div class="col-6 tut-elem tut-3">
+      <h4 class="tut-heading">Get the URL</h4>
+      <p class="tut-text">Copy the Google Sheet URL from the browser input and paste it into the field up top. <br/><strong>Press the Quiz button</strong>.</p>
+      <img src="tut3.png" class="tut-image" alt="">
+    </div>
+    <div class="w-100"></div>
+    <div class="col-6 tut-elem tut-4">
+      <h4 class="tut-heading">...good to go.</h4>
+      <p class="tut-text">The grid should appear, complete with all the content from the linked sheet. Access the quiz anywhere using <br/> <strong>http://quizgenfinal.firebaseapp.com/?sheet=<em>sheeturl</em></strong>.<br/>
+      <i class="fa fa-check-circle fa-4x" aria-hidden="true"></i>
+    </div>
+  </div>
 
-    <div id = splash>
+</div>
 
-      <div id = meta>
-        <span id = title></span>
+  <div class="container hide-init">
+
+    <div id="splash">
+
+      <div id="meta">
+        <span id="title"></span>
         <br/>
-        <span id = day></span>
+        <span id="day"></span>
       </div>
 
-      <ul id = rules>
+      <ul id="rules">
       </ul>
 
-       <button id = start disabled onclick = scrollToGrid()>Start</button>
+       <button id="start" disabled onclick = scrollToGrid()>Start</button>
       <br/>
-      <button id = access disabled onclick = invert()><i class = "fa fa-eye fa-fw fa-2x" aria-hidden = true></i>
+      <button id="access" disabled onclick = invert()><i class = "fa fa-lightbulb-o fa-fw fa-2x" aria-hidden = true></i>
       </button>
-    </div>
-
-    <div id = footer>
-      <div id = branding>
-
-      </div>
-    </div>
 
     </div>
+
   </div>
 
-  <div class = "container hide-init">
+  <div class="container hide-init">
 
-    <div id = gridfield>
-      <table id = grid></table>
+    <div id ="gridfield">
+      <table id="grid"></table>
     </div>
-
-
   </div>
   </body>
 </html>
