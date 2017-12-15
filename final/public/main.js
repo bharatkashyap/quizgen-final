@@ -42,6 +42,9 @@ function createQuiz(response)
         var init = document.getElementsByClassName("init")[0];
         init.className += " success-hide";
 
+        var tutorial = document.getElementsByClassName("tutorial")[0];
+        tutorial.style.display = "none";
+
         var splash = document.getElementById("splash");
         splash.className += " success-show";
 
@@ -121,7 +124,7 @@ function populateTable(questions, questions_media, answers, answers_media, answe
 
 function scrollToGrid()
   {
-    var height = document.getElementsByClassName("container")[0].clientHeight;
+    var height = document.getElementsByClassName("container-x")[0].clientHeight;
 
     window.scrollBy(0, 1.1 * ( (window.scrollY / 5) + 1) ); //Totally random forumla for Ease-in that looked good
 
@@ -141,7 +144,7 @@ function loadQuestion(object)
     var container = document.createElement("DIV");
     container.id = "questionfield";
 
-    var act_container = document.getElementsByClassName("container")[1];
+    var act_container = document.getElementsByClassName("container-x")[1];
     act_container.appendChild(container); //Append questionfield to container
 
     var quesNum = document.createElement("DIV");
@@ -231,8 +234,8 @@ function loadQuestion(object)
 
   function invert()
   {
-    document.getElementsByClassName("container")[0].classList.toggle("invert");
-    document.getElementsByClassName("container")[1].classList.toggle("invert");
+    document.getElementsByClassName("container-x")[0].classList.toggle("invert");
+    document.getElementsByClassName("container-x")[1].classList.toggle("invert");
   } //Colour-scheme
 
   function makeXHR(callback){
