@@ -311,6 +311,7 @@ function loadQuestion(object)
     sr.reveal('.tut-2', {duration: 2000});
     sr.reveal('.tut-3', {duration: 2000});
     sr.reveal('.tut-4', {duration: 2000});
+    sr.reveal('.tut-5', {duration: 2000});
 }
 
 
