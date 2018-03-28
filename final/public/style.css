@@ -399,6 +399,13 @@ input[type="text"]
   font-family : 'Nunito', sans-serif;
   z-index: 200;
 }
+#answerDescr
+{
+  font-size: 1.2em;
+  font-family : 'Nunito', sans-serif;
+  text-align : center;
+  color: rgba(0,0,0,0.7);
+}
 
 #questionMedia, #answerMedia
 {

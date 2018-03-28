@@ -124,7 +124,6 @@ function populateTable(questions, questions_media, answers, answers_media, answe
             answerDescr: answers_descr[q]
           };
           loadQuestion(question_object);
-
         };
 
       }
@@ -196,6 +195,14 @@ function loadQuestion(object)
       answer.id = "answer";
       answer.innerHTML = object.answer; //Div for answer content
 
+
+      if(!(object.answerDescr === ""))
+      {
+        var answerDescr = document.createElement("DIV");
+        answerDescr.id = "answerDescr";
+        answerDescr.innerHTML = object.answerDescr; //Div for answer description
+      }
+
       cell.style.opacity = 0.3; //Semi-hide question to show it has been used
 
       if(!(object.answerMedia === ""))
@@ -211,6 +218,8 @@ function loadQuestion(object)
       controls.removeChild(viewAns); //Remove view answer button from controls div but keep return to grid button
 
       container.appendChild(answer);
+      if(answerDescr)
+        container.appendChild(answerDescr);
       if(answerMedia)
         container.appendChild(answerMedia);
       container.appendChild(controls); ///Append answerimage, answer and control buttons divisions to questionfield
