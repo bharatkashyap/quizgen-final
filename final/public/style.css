@@ -89,6 +89,7 @@ html, body
   bottom: 0;
   font-family :'Nunito', sans-serif;
   width: auto;
+  outline: 0;
 }
 
 #slideshow .slide{
@@ -201,6 +202,7 @@ button
   background-color : rgba(0,0,0,0.8);
   color : #FFF;
   transition : background ease-in-out 0.1s;
+  outline: 0;
 }
 
 button:hover, button:focus
@@ -313,6 +315,7 @@ input[type="text"]
   padding : 5% 12.5%;
   transform : translate(-50%, 0);
   font-size: 1em;
+  outline: 0;
 }
 
 #gridfield
@@ -430,12 +433,21 @@ input[type="text"]
 
 #access
 {
-  position : relative;
-  left : 45%;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44px;
+  height: 44px;
+  margin: 0 auto;
   margin-top : 5%;
-  border-radius : 45%;
+  border-radius : 25px;
+  outline: 0;
 }
 
+#access i
+{
+  font-size: 25px;
+}
 /* Inversion */
 
 .invert
