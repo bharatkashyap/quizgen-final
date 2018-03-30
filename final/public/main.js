@@ -166,7 +166,28 @@ function loadQuestion(object)
 
     if(!(object.questionMedia === ""))
     {
-      var questionMedia = document.createElement("IMG");
+      var type = object.questionMedia.substr(-3);
+      console.log(type);
+      switch(type)
+      {
+        case "png":
+        case "jpg":
+        case "gif":
+        case "peg":
+          var questionMedia = document.createElement("IMG");
+          break;
+        case "mp3":
+          var questionMedia = document.createElement("AUDIO");
+          questionMedia.controls = true;
+          break;
+        case "mp4":
+        case "flv":
+          var questionMedia = document.createElement("VIDEO");
+          questionMedia.controls = true;
+          break;
+        default:
+          var questionMedia = document.createElement("IMG")
+      }
       questionMedia.id = "questionMedia";
       questionMedia.src = object.questionMedia;
     }
@@ -207,9 +228,32 @@ function loadQuestion(object)
 
       if(!(object.answerMedia === ""))
       {
-        var answerMedia = document.createElement("IMG");
+        var type = object.answerMedia.substr(-3);
+
+        switch(type)
+        {
+          case "png":
+          case "jpg":
+          case "gif":
+          case "peg":
+            var answerMedia = document.createElement("IMG");
+            break;
+          case "mp3":
+            var answerMedia = document.createElement("AUDIO");
+            answerMedia.controls = true;
+            break;
+          case "mp4":
+          case "flv":
+            var answerMedia = document.createElement("VIDEO");
+            answerMedia.controls = true;
+            break;
+          default:
+            var answerMedia = document.createElement("IMG");
+          }
+        
         answerMedia.id = "answerMedia";
         answerMedia.src = object.answerMedia; //Div for answer resource image
+
       }
 
       container.removeChild(question); //Remove question from questionfield

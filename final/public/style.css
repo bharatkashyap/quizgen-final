@@ -47,19 +47,19 @@ html, body
   text-align: center;
   font-variant: small-caps;
   font-size: 2.8rem;
-  font-family: 'Nunito';
+  font-family: 'Nunito', sans-serif;
 }
 
 .init #subheading-maj
 {
-  font-family: 'Nunito';
+  font-family: 'Nunito', sans-serif;
   font-size: 3rem;
 }
 
 
 .init #subheading-min
 {
-  font-family: 'Nunito';
+  font-family: 'Nunito'm sans-serif;
   font-size: 1rem;
   color: rgba(0,0,0,0.2);
 }
@@ -76,7 +76,7 @@ html, body
   border-style: none;
   border-bottom-style: outset;
   outline: 0;
-  font-family :'Nunito';
+  font-family :'Nunito', sans-serif;
   width: auto;
   text-align: left;
 
@@ -87,7 +87,7 @@ html, body
   font-size: 1em;
   position: relative;
   bottom: 0;
-  font-family :'Nunito';
+  font-family :'Nunito', sans-serif;
   width: auto;
 }
 
@@ -275,6 +275,7 @@ label
 input[type="text"]
 {
   font-size: 1.1em;
+  font-family: "Nunito", sans-serif;
   color : rgba(0,0,0,0.6);
 }
 
