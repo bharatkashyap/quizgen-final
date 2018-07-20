@@ -1,17 +1,16 @@
-html, body
-{
-  height : 100%;
-  width : 100%;
-  margin : 0;
-  padding : 0;
-  font-family : 'Pontano Sans', sans-serif;
-  -webkit-font-smoothing : antialiased;
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Pontano Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
- .hide-init
- {
-   display: none;
- }
+.hide-init {
+  display: none;
+}
 
 .init {
   position: absolute;
@@ -31,7 +30,8 @@ html, body
 
 .video {
   position: fixed;
-  top: 50%; left: 50%;
+  top: 50%;
+  left: 50%;
   z-index: -1;
   opacity: 0.3;
   min-width: 100%;
@@ -41,58 +41,50 @@ html, body
   transform: translate(-50%, -50%);
 }
 
-.init  #heading
-{
+.init #heading {
   margin: 4vh 0 1vw 0;
   text-align: center;
   font-variant: small-caps;
   font-size: 2.8rem;
-  font-family: 'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
 }
 
-.init #subheading-maj
-{
-  font-family: 'Nunito', sans-serif;
+.init #subheading-maj {
+  font-family: "Nunito", sans-serif;
   font-size: 3rem;
 }
 
-
-.init #subheading-min
-{
-  font-family: 'Nunito'm sans-serif;
+.init #subheading-min {
+  font-family: "Nunito" m sans-serif;
   font-size: 1rem;
-  color: rgba(0,0,0,0.2);
+  color: rgba(0, 0, 0, 0.2);
 }
 
-.init .input-field
-{
+.init .input-field {
   margin: 2vh 0 0 0;
 }
 
-.init  input
-{
+.init input {
   line-height: 1.5em;
   border-width: thin;
   border-style: none;
   border-bottom-style: outset;
   outline: 0;
-  font-family :'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
   width: auto;
   text-align: left;
-
 }
 
-.init  button
-{
+.init button {
   font-size: 1em;
   position: relative;
   bottom: 0;
-  font-family :'Nunito', sans-serif;
+  font-family: "Nunito", sans-serif;
   width: auto;
   outline: 0;
 }
 
-#slideshow .slide{
+#slideshow .slide {
   position: absolute;
   left: 15%;
   width: 70%;
@@ -102,7 +94,6 @@ html, body
   transition: opacity 0.6s ease-in-out;
   z-index: 100;
   border-bottom: 3px inset #313131;
-
 }
 
 #slideshow .img-active {
@@ -110,8 +101,7 @@ html, body
   z-index: 90;
 }
 
-.success-hide
-{
+.success-hide {
   opacity: 0;
 }
 
@@ -124,8 +114,7 @@ html, body
 .visible {
   opacity: 1;
 }
-@media screen and (max-width: 576px)
-{
+@media screen and (max-width: 576px) {
   html {
     font-size: 12px;
   }
@@ -135,34 +124,34 @@ html, body
   #subheading-maj {
     margin: 4vh 0;
   }
-  #subheading-ming{
+  #subheading-ming {
     margin: 2vh 0;
   }
   #slideshow {
     margin: 4vh 0;
   }
 
-  #slideshow .slide{
+  #slideshow .slide {
     width: 100%;
     left: 0;
   }
 
   .tut-elem {
-    flex: 0 0 100%!important;
-    max-width: 100%!important;
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
   }
 }
 .tut-intro {
-  font-family: 'Helvetica', sans-serif;
+  font-family: "Helvetica", sans-serif;
 }
 
 .tut-elem {
-  font-family: 'Roboto Mono', 'Nunito', sans-serif;
+  font-family: "Roboto Mono", "Nunito", sans-serif;
 }
 
 .tut-elem {
-  background-color: #FFF;
-  border: 1px outset rgba(0,0,0,0.2);
+  background-color: #fff;
+  border: 1px outset rgba(0, 0, 0, 0.2);
   border-radius: 3px;
   margin: 3vh 0;
 }
@@ -187,37 +176,33 @@ html, body
   margin: 1vh 0;
 }
 
-.container-x
-{
-  height : 100%;
-  width : 100%;
-  background-color : #FFF;
+.container-x {
+  height: 100%;
+  width: 100%;
+  background-color: #fff;
   overflow: auto;
   z-index: 20000;
 }
 
-button
-{
-  border : 0;
-  background-color : rgba(0,0,0,0.8);
-  color : #FFF;
-  transition : background ease-in-out 0.1s;
+button {
+  border: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  transition: background ease-in-out 0.1s;
   outline: 0;
 }
 
-button:hover, button:focus
-{
-  cursor : pointer;
-  background : rgba(0,0,0,0.85);
-  outline : 0;
+button:hover,
+button:focus {
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.85);
+  outline: 0;
 }
 
-
-#splash
-{
-  position : absolute;
-  top : 40%;
-  left : 50%;
+#splash {
+  position: absolute;
+  top: 40%;
+  left: 50%;
   transform: translate(-50%, -50%);
   opacity: 0;
   transition: opacity 1s ease-in;
@@ -228,15 +213,12 @@ button:hover, button:focus
   z-index: 20000;
 }
 
-.success-show
-{
-  opacity: 1!important;  /* Since id styles take preference over class styles */
-  display: block!important; /* For hide-init to become visible */
-
+.success-show {
+  opacity: 1 !important; /* Since id styles take preference over class styles */
+  display: block !important; /* For hide-init to become visible */
 }
 
-#meta
-{
+#meta {
   text-align: center;
 }
 
@@ -249,243 +231,209 @@ button:hover, button:focus
 }
 */
 
-
-#text
-{
-  font-size : 1em;
+#text {
+  font-size: 1em;
   width: 70%;
   margin: 5% auto;
   font-family: "Nunito", sans-serif;
-  color : rgba(0,0,0,0.7);
-  text-align : center;
-
-}
-
-form
-{
+  color: rgba(0, 0, 0, 0.7);
   text-align: center;
 }
 
-label
-{
-  font-size : 1.2em;
-  font-family: "Nunito", sans-serif;
-  color : rgba(0,0,0,0.6);
-  text-align : center;
+form {
+  text-align: center;
 }
 
-input[type="text"]
-{
+label {
+  font-size: 1.2em;
+  font-family: "Nunito", sans-serif;
+  color: rgba(0, 0, 0, 0.6);
+  text-align: center;
+}
+
+input[type="text"] {
   font-size: 1.1em;
   font-family: "Nunito", sans-serif;
-  color : rgba(0,0,0,0.6);
+  color: rgba(0, 0, 0, 0.6);
 }
 
-#title
-{
-  font-size : 2em;
-  color : rgba(0,0,0,0.7);
+#title {
+  font-size: 2em;
+  color: rgba(0, 0, 0, 0.7);
 }
 
-#day
-{
-  font-size : 1.2em;
-  color : rgba(0,0,0,0.5);
+#day {
+  font-size: 1.2em;
+  color: rgba(0, 0, 0, 0.5);
 }
 
-#rules
-{
-  margin : 25% 0;
-  padding : 0;
-  font-size : 1.3em;
+#rules {
+  margin: 25% 0;
+  padding: 0;
+  font-size: 1.3em;
   list-style-type: circle;
 }
 
-#rules li
-{
-  margin-bottom : 5%;
+#rules li {
+  margin-bottom: 5%;
 }
 
-
-#start
-{
-  position : relative;
-  left : 50%;
-  margin : 0;
-  padding : 5% 12.5%;
-  transform : translate(-50%, 0);
+#start {
+  position: relative;
+  left: 50%;
+  margin: 0;
+  padding: 5% 12.5%;
+  transform: translate(-50%, 0);
   font-size: 1em;
   outline: 0;
 }
 
-#gridfield
-{
-  position : relative;
-  top : 30%;
+#gridfield {
+  position: relative;
+  top: 30%;
   transform: translateY(-30%);
-  width : 100%;
+  width: 100%;
   z-index: 20000;
 }
 
-#grid
-{
-  margin : 0 auto;
-  width : 80%;
-  text-align : center;
-  border-collapse : collapse;
-  font-size : 1.5em;
+#grid {
+  margin: 0 auto;
+  width: 80%;
+  text-align: center;
+  border-collapse: collapse;
+  font-size: 1.5em;
   z-index: 20000;
 }
 
-#grid td
-{
-  padding : 2%;
-  border : 1px solid rgba(0,0,0,0.2);
+#grid td {
+  padding: 2%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-#grid td:hover
-{
-  cursor : pointer;
+#grid td:hover {
+  cursor: pointer;
 }
 
-#grid td:nth-of-type(1)
-{
-  border-left : none;
+#grid td:nth-of-type(1) {
+  border-left: none;
 }
 
-#grid td:nth-last-of-type(1)
-{
-  border-right : none;
+#grid td:nth-last-of-type(1) {
+  border-right: none;
 }
 
-#grid tr:nth-of-type(1) td
-{
+#grid tr:nth-of-type(1) td {
   border-top: none;
 }
 
-#grid tr:nth-last-of-type(1) td
-{
+#grid tr:nth-last-of-type(1) td {
   border-bottom: none;
 }
 
-#questionfield
-{
-  position : relative;
-  top : 10%;
+#questionfield {
+  position: relative;
+  top: 10%;
   z-index: 200000;
 }
 
-#question, #controls, #answer
-{
-  margin : 5% auto;
-  width : 60%;
-  text-align : center;
-  z-index: 200000;
-}
-
-#question
-{
-  font-size : 1.3em;
-  text-align: justify;
-  font-family : 'Nunito', sans-serif;
-}
-
-#quesNum
-{
+#question,
+#controls,
+#answer {
+  margin: 5% auto;
+  width: 60%;
   text-align: center;
-  font-size : 1.6em;
-  font-family : 'Nunito', sans-serif;
+  z-index: 200000;
 }
 
-#answer
-{
-  font-size : 1.4em;
-  font-family : 'Nunito', sans-serif;
+#question {
+  font-size: 1.3em;
+  text-align: justify;
+  font-family: "Nunito", sans-serif;
+}
+
+#quesNum {
+  text-align: center;
+  font-size: 1.6em;
+  font-family: "Nunito", sans-serif;
+}
+
+#answer {
+  font-size: 1.4em;
+  font-family: "Nunito", sans-serif;
   z-index: 200;
 }
-#answerDescr
-{
+#answerDescr {
   font-size: 1.2em;
-  font-family : 'Nunito', sans-serif;
-  text-align : center;
-  color: rgba(0,0,0,0.7);
+  font-family: "Nunito", sans-serif;
+  text-align: center;
 }
 
-#questionMedia, #answerMedia
-{
-  position : relative;
-  left : 50%;
-  transform : translateX(-50%);
-  width : 40%;
-  height : 20%;
+#questionMedia,
+#answerMedia {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40%;
+  height: 20%;
   z-index: 200;
 }
 
-#viewAns, #returnGrid
-{
-  display : inline-block;
-  padding : 3% 9%;
-  width : 70%;
-  margin-bottom : 1%;
-  font-size : 1em;
+#viewAns,
+#returnGrid {
+  display: inline-block;
+  padding: 3% 9%;
+  width: 70%;
+  margin-bottom: 1%;
+  font-size: 1em;
   z-index: 200;
 }
 
-#access
-{
+#access {
   position: relative;
   left: 50%;
   transform: translateX(-50%);
   width: 44px;
   height: 44px;
   margin: 0 auto;
-  margin-top : 5%;
-  border-radius : 25px;
+  margin-top: 5%;
+  border-radius: 25px;
   outline: 0;
 }
 
-#access i
-{
+#access i {
   font-size: 25px;
 }
 /* Inversion */
 
-.invert
-{
-  background-color : #000;
-  color : #FFF;
+.invert {
+  background-color: #000;
+  color: #fff;
 }
 
-.invert #meta span, .invert #quesNum
-{
-  color : rgba(188, 128, 39, 1);
+.invert #meta span,
+.invert #quesNum {
+  color: rgba(188, 128, 39, 1);
 }
 
-
-.invert button
-{
-  background: rgba(255,255,255,0.8);
-  color : rgba(0,0,0,0.8);
+.invert button {
+  background: rgba(255, 255, 255, 0.8);
+  color: rgba(0, 0, 0, 0.8);
 }
 
-.invert button:hover
-{
-  background : rgba(255,255,255,0.95);
+.invert button:hover {
+  background: rgba(255, 255, 255, 0.95);
 }
 
-.invert a
-{
-  color: #fff!important;
-  border-bottom: 0.5px dashed rgba(255,255,255,0.95);
+.invert a {
+  color: #fff !important;
+  border-bottom: 0.5px dashed rgba(255, 255, 255, 0.95);
 }
 
-a
-{
-  text-decoration: none!important;
-  border-bottom: 0.5px dashed rgba(0,0,0,0.95);
-  color: rgba(0,0,0,0.65)!important;
+a {
+  text-decoration: none !important;
+  border-bottom: 0.5px dashed rgba(0, 0, 0, 0.95);
+  color: rgba(0, 0, 0, 0.65) !important;
 }
-a:hover
-{
-  text-decoration: !important;
+a:hover {
+  text-decoration: none !important;
 }
