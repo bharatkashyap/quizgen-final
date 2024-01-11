@@ -565,6 +565,10 @@ function displayQuizCards(quizzes) {
   quizzesContainer.innerHTML = "";
   let row;
   if (!quizzes.length) {
+    let noResults = document.createElement("div");
+    noResults.className = "col-md-12 my-4";
+    noResults.innerHTML = "No results found - try another search term.";
+    quizzesContainer.appendChild(noResults);
     return;
   }
   quizzes.forEach(function (doc, index) {
