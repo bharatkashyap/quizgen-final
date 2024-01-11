@@ -530,10 +530,12 @@ function displaySheetCards(sheets) {
     let sheetDescription = document.createElement("p");
     sheetDescription.className = "card-text";
 
-    sheetDescription.innerHTML =
-      "Modified <strong>" +
-      formatRelativeTime(new Date(sheet.modifiedTime)) +
-      "</strong>";
+    if (sheet.modifiedTime) {
+      sheetDescription.innerHTML =
+        "Modified <strong>" +
+        formatRelativeTime(new Date(sheet.modifiedTime)) +
+        "</strong>";
+    }
 
     sheetCardBody.appendChild(sheetTitle);
     sheetCardBody.appendChild(sheetDescription);
