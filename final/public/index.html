@@ -1,20 +1,59 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Quizgen</title>
-    <link rel="stylesheet" href="style.css" media="screen">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-    <script src="https://use.fontawesome.com/64ef20be9f.js"></script>
+<head>
+  <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="main.js" charset="utf-8"></script>
-    <script src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
-    <link href="https://fonts.googleapis.com/css?family=Pontano+Sans|Nunito|Roboto+Mono" rel = stylesheet>
-  </head>
-  <body>
+  <title>Quizgen</title>
 
-<div class="init">
+  </script>
+  <link rel="stylesheet" href="style.css" media="screen">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+    integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+  <script src="https://use.fontawesome.com/64ef20be9f.js"></script>
+
+
+  <script src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&family=Comfortaa&family=Inter&display=swap"
+    rel="stylesheet">
+
+  <script async defer src="https://apis.google.com/js/api.js"></script>
+  <!-- <script async defer src="https://accounts.google.com/gsi/client"></script> -->
+  <script src="index.js" charset="utf-8" type="module"></script>
+
+
+
+</head>
+
+<body>
+
+  <div id="auth">
+    <button type="button" name="button" class="pushable mt-4 opacity-0 d-flex mx-auto" id="saveQuiz"
+      onclick="saveQuiz()">
+      <span class="shadow"></span>
+      <span class="edge"></span>
+      <span class="front">
+        <i class="fa fa-upload mr-2"></i><span id="save-label">Publish</span></span>
+    </button>
+    <button type="button" name="button" class="pushable mt-4 opacity-0 d-flex mx-auto" id="refreshQuiz"
+      onclick="refreshQuiz()">
+      <span class="shadow"></span>
+      <span class="edge"></span>
+      <span class="front">
+        <i class="fa fa-refresh mr-2"></i><span id="refresh-label">Refresh</span></span>
+    </button>
+    <div id="publishedLink" class="mt-2 text-center opacity-0 d-none">
+      <i class="fa fa-check-circle fa-2x" aria-hidden="true"></i>
+      <h6>Quiz published successfully at <br /><a href="" target="_blank" id="publishedLinkURL"></a></h6>
+    </div>
+
+  </div>
+
+  <div class="init">
+
     <div class="row">
       <div class="col">
         <h1 id="heading">Quizgen</h1>
@@ -29,61 +68,98 @@
 
     <div class="row">
       <div class="col">
-        <h1 id="subheading-min" class="h5 text-muted">Linked directly to Google Sheets. Easier to make and share.</h1>
+        <h1 id="subheading-min" class="h5 text-muted">Linked directly to Google Sheets. Easier to make and
+          share.</h1>
+      </div>
+    </div>
+
+    <div id="quizzes" class="container-fluid opacity-0 mt-2">
+      <h4 id="quizzesHeading" class="invisible"></h4>
+      <div id="quiz-cards" class="container-fluid">
       </div>
     </div>
 
     <div class="row input-field">
       <div class="col align-self-center">
-        <input id="spreadsheet" type="text" placeholder="Google Sheet URL"></input>
-        <button type="button" name="button" onclick="makeXHR(createQuiz);">Quiz</button>
+        <!-- <input id="spreadsheet" type="text" placeholder="Google Sheet URL"></input> -->
+        <button type="button" name="button" class="pushable disabled mt-4" id="fetchSheets"
+          onclick="signInWithGoogle(fetchUserData)">
+          <span class="shadow"></span>
+          <span class="edge"></span>
+          <span class="front">
+            <i class="fa fa-google mr-2"></i><span id="search-button-label">Fetch Sheets</span></span>
+        </button>
+        <div id="error" class="opacity-0 text-center">
+          <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
+          <h1 class="h3" id="errorMessage"></h1>
+        </div>
       </div>
     </div>
-  <!--  <video class=video id="bgvid" playsinline autoplay muted loop>
-      <source src="https://raw.githubusercontent.com/bharatkashyap/quizgen-final/master/final/demo.webm" type="video/webm">
-    </video> -->
 
-  <div id="slideshow">
-        <img src="img/quizgen.svg" class="slide img-active" alt="">
-        <img src="img/quizgen2.svg" class="slide" alt="">
+    <div id="sheets" class="container-fluid">
+      <div id="shimmer-container" class="col-10 mx-auto invisible hide-init">
+        <div class="shimmer"></div>
+      </div>
+      <h4 id="sheetsHeading" class="invisible">Google Sheets</h4>
+      <input type="text" id="sheetsSearch" placeholder="Sheet name" class="form-control col-md-4 mx-auto invisible"
+        onkeyup="searchSheets(event)">
+     
+      <div id="sheets-cards" class="container-fluid">
+      </div>
+    </div>
+
+    <div id="slideshow">
+      <img src="img/quizgen.svg" class="slide img-active" alt="">
+      <img src="img/quizgen2.svg" class="slide" alt="">
+    </div>
+
+    <div class="row justify-content-center tutorial">
+      <div class="col tutorial-intro">
+        <h1 class="h3">Get started.</h1>
+      </div>
+      <div class="w-100"></div>
+      <div class="col-6 tut-elem tut-1">
+        <h4 class="tut-heading">Create a Google Sheet</h4>
+        <p class="tut-text">Duplicate <a
+            href="https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/edit#gid=0"
+            target="_blank"><strong>this</strong></a> sample sheet. It won't work if the format isn't <em>exactly</em>
+          the same, so be careful. <br /><strong>Click on File, Publish to the Web.</strong></p>
+        <img src="img/tut1.png" class="tut-image" alt="">
+      </div>
+      <div class="w-100"></div>} V
+      <div class="col-6 tut-elem tut-2">
+        <h4 class="tut-heading">Publish to the Web</h4>
+        <p class="tut-text">Select the name of the sheet, and click on <strong>Publish</strong>.</p>
+        <img src="img/tut2.png" class="tut-image" alt="">
+      </div>
+      <div class="w-100"></div>
+      <div class="col-6 tut-elem tut-3">
+        <h4 class="tut-heading">Get the URL</h4>
+        <p class="tut-text">Copy the Google Sheet URL from the <strong>browser URL address bar</strong> <em>(not the
+            published URL)</em> and paste it into the field up top. <br /><strong>Press the Quiz button</strong>.</p>
+        <img src="img/tut3.png" class="tut-image" alt="">
+      </div>
+      <div class="w-100"></div>
+      <div class="col-6 tut-elem tut-4">
+        <h4 class="tut-heading">...good to go.</h4>
+        <p class="tut-text">The grid should appear, complete with all the content from the linked sheet. Access the
+          quiz
+          anywhere using <br /> <strong>http://quizgen-final.firebaseapp.com/?sheet=<em>sheeturl</em></strong>, like
+          <a href="https://quizgen-final.firebaseapp.com/?sheet=https://docs.google.com/spreadsheets/d/1W4A4rrA812qtynqrU3Y4iYQrFrizoAe8WezAw0wviEg/edit#gid=0"
+            target="_blank">so</a>.<br />
+          <i class="fa fa-check-circle fa-4x" aria-hidden="true"></i>
+      </div>
+      <div class="w-100"></div>
+      <div class="col-6 tut-elem tut-5">
+        <h5 class="tut-heading">
+          <h5>
+            <p class="tut-text">Maintained <a href="https://github.com/bharatkashyap/quizgen-final"
+                target="_blank">here</a>. <br />Built by <a href=https://bharatkashyap.github.io target=_blank>this</a>
+              guy.</p>
+      </div>
+
+    </div>
   </div>
-
-  <div class="row justify-content-center tutorial">
-    <div class="col tutorial-intro">
-      <h1 class="h3">Get started.</h1>
-    </div>
-    <div class="w-100"></div>
-    <div class="col-6 tut-elem tut-1">
-      <h4 class="tut-heading">Create a Google Sheet</h4>
-      <p class="tut-text">Duplicate <a href="https://docs.google.com/spreadsheets/d/1oI83izpSqQIJP8_A65smGIuSr1AT66v8F-vFkvR5O2k/edit#gid=0" target="_blank"><strong>this</strong></a> sample sheet. It won't work if the format isn't <em>exactly</em> the same, so be careful. <br/><strong>Click on File, Publish to the Web.</strong></p>
-      <img src="img/tut1.png" class="tut-image" alt="">
-    </div>
-    <div class="w-100"></div>
-    <div class="col-6 tut-elem tut-2">
-      <h4 class="tut-heading">Publish to the Web</h4>
-      <p class="tut-text">Select the name of the sheet, and click on <strong>Publish</strong>.</p>
-      <img src="img/tut2.png" class="tut-image" alt="">
-    </div>
-    <div class="w-100"></div>
-    <div class="col-6 tut-elem tut-3">
-      <h4 class="tut-heading">Get the URL</h4>
-      <p class="tut-text">Copy the Google Sheet URL from the <strong>browser URL address bar</strong> <em>(not the published URL)</em> and paste it into the field up top. <br/><strong>Press the Quiz button</strong>.</p>
-      <img src="img/tut3.png" class="tut-image" alt="">
-    </div>
-    <div class="w-100"></div>
-    <div class="col-6 tut-elem tut-4">
-      <h4 class="tut-heading">...good to go.</h4>
-      <p class="tut-text">The grid should appear, complete with all the content from the linked sheet. Access the quiz anywhere using <br/> <strong>http://quizgen-final.firebaseapp.com/?sheet=<em>sheeturl</em></strong>, like <a href="https://quizgen-final.firebaseapp.com/?sheet=https://docs.google.com/spreadsheets/d/1W4A4rrA812qtynqrU3Y4iYQrFrizoAe8WezAw0wviEg/edit#gid=0" target="_blank">so</a>.<br/>
-      <i class="fa fa-check-circle fa-4x" aria-hidden="true"></i>
-    </div>
-    <div class="w-100"></div>
-    <div class="col-6 tut-elem tut-5">
-      <h5 class="tut-heading"><h5>
-      <p class="tut-text">Maintained <a href="https://github.com/bharatkashyap/quizgen-final" target="_blank">here</a>. <br/>Built by <a href=https://bharatkashyap.github.io target=_blank>this</a> guy.</p>
-    </div>
-
-  </div>
-</div>
 
   <div class="container-x hide-init">
 
@@ -91,16 +167,16 @@
 
       <div id="meta">
         <span id="title"></span>
-        <br/>
+        <br />
         <span id="day"></span>
       </div>
 
       <ul id="rules">
       </ul>
 
-       <button id="start" disabled onclick = scrollToGrid()>Start</button>
-      <br/>
-      <button id="access" disabled onclick = invert()><i class = "fa fa-lightbulb-o fa-fw fa-2x" aria-hidden = true></i>
+      <button id="start" disabled onclick=scrollToGrid()>Start</button>
+      <br />
+      <button id="access" disabled onclick=invert()><i class="fa fa-lightbulb-o fa-fw fa-2x" aria-hidden=true></i>
       </button>
 
     </div>
@@ -109,9 +185,12 @@
 
   <div class="container-x hide-init">
 
-    <div id ="gridfield">
+    <div id="gridfield">
       <table id="grid"></table>
     </div>
   </div>
-  </body>
+
+
+</body>
+
 </html>

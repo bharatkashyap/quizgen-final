@@ -4,12 +4,18 @@ body {
   width: 100%;
   margin: 0;
   padding: 0;
-  font-family: "Pontano Sans", sans-serif;
+  scrollbar-gutter: stable;
   -webkit-font-smoothing: antialiased;
 }
 
 .hide-init {
-  display: none;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  -webkit-transition: opacity 1s ease-in-out;
+  -moz-transition: opacity 1s ease-in-out;
+  -ms-transition: opacity 1s ease-in-out;
+  -o-transition: opacity 1s ease-in-out;
+  height: 0 !important;
 }
 
 .init {
@@ -44,44 +50,156 @@ body {
 .init #heading {
   margin: 4vh 0 1vw 0;
   text-align: center;
-  font-variant: small-caps;
   font-size: 2.8rem;
-  font-family: "Nunito", sans-serif;
+  font-family: "Playfair Display", serif;
 }
 
 .init #subheading-maj {
-  font-family: "Nunito", sans-serif;
+  font-family: "Comfortaa", sans-serif;
   font-size: 3rem;
 }
 
 .init #subheading-min {
-  font-family: "Nunito" m sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 1rem;
   color: rgba(0, 0, 0, 0.2);
 }
 
-.init .input-field {
-  margin: 2vh 0 0 0;
+.init #fetchSheets .front,
+button#saveQuiz .front,
+button#refreshQuiz .front {
+  background: hsl(345deg 100% 47%);
 }
 
-.init input {
-  line-height: 1.5em;
-  border-width: thin;
-  border-style: none;
-  border-bottom-style: outset;
-  outline: 0;
-  font-family: "Nunito", sans-serif;
-  width: auto;
-  text-align: left;
+.init #notion .front {
+  background: black;
 }
 
-.init button {
-  font-size: 1em;
+.pushable {
   position: relative;
-  bottom: 0;
-  font-family: "Nunito", sans-serif;
-  width: auto;
-  outline: 0;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  outline-offset: 4px;
+  transition: filter 250ms;
+  font-family: "Comfortaa", sans-serif;
+}
+
+button.pushable .shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: hsl(0deg 0% 0% / 0.25);
+  will-change: transform;
+  transform: translateY(2px);
+  transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+button.pushable .edge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background: linear-gradient(
+    to left,
+    hsl(340deg 100% 16%) 0%,
+    hsl(340deg 100% 32%) 8%,
+    hsl(340deg 100% 32%) 92%,
+    hsl(340deg 100% 16%) 100%
+  );
+}
+button.pushable .front {
+  display: block;
+  position: relative;
+  padding: 12px 42px;
+  border-radius: 12px;
+  font-size: 1.25rem;
+  color: white;
+  will-change: transform;
+  transform: translateY(-4px);
+  transition: transform 600ms cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+button.pushable:hover {
+  filter: brightness(110%);
+  background: inherit;
+}
+button.pushable:focus {
+  background: inherit;
+}
+button.pushable:hover .front {
+  transform: translateY(-6px);
+  transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+button.pushable:active .front {
+  transform: translateY(-2px);
+  transition: transform 34ms;
+}
+button.pushable:hover .shadow {
+  transform: translateY(4px);
+  transition: transform 250ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
+}
+button.pushable:active .shadow {
+  transform: translateY(1px);
+  transition: transform 34ms;
+}
+button.pushable:focus:not(:focus-visible) {
+  outline: none;
+}
+
+button.pushable.disabled {
+  filter: grayscale(1);
+}
+
+/* Add the shimmer effect styles */
+@keyframes shimmer {
+  0% {
+    background-position: -200%;
+  }
+  100% {
+    background-position: 200%;
+  }
+}
+
+/* Style for the shimmer container */
+#shimmer-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Style for the shimmer effect */
+.shimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.min-height-shimmer {
+  min-height: 15vh !important;
+}
+
+.sheet-card,
+.quiz-card {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.sheet-card img {
+  max-width: 100%;
+  max-height: 100px;
+  margin-bottom: 10px;
 }
 
 #slideshow .slide {
@@ -91,7 +209,7 @@ body {
   max-width: 100%;
   margin: 3vh 0 0 0;
   opacity: 0;
-  transition: opacity 0.6s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
   z-index: 100;
   border-bottom: 3px inset #313131;
 }
@@ -142,11 +260,11 @@ body {
   }
 }
 .tut-intro {
-  font-family: "Helvetica", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .tut-elem {
-  font-family: "Roboto Mono", "Nunito", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 .tut-elem {
@@ -204,18 +322,13 @@ button:focus {
   top: 40%;
   left: 50%;
   transform: translate(-50%, -50%);
-  opacity: 0;
-  transition: opacity 1s ease-in;
-  -webkit-transition: opacity 1s ease-in;
-  -moz-transition: opacity 1s ease-in;
-  -ms-transition: opacity 1s ease-in;
-  -o-transition: opacity 1s ease-in;
   z-index: 20000;
 }
 
 .success-show {
   opacity: 1 !important; /* Since id styles take preference over class styles */
   display: block !important; /* For hide-init to become visible */
+  height: 100% !important; /* For hide-init to become visible */
 }
 
 #meta {
@@ -225,7 +338,7 @@ button:focus {
 /* #heading
 {
   font-size : 2em;
-  font-family: "Nunito", sans-serif;
+  font-family: "Inter", sans-serif;
   color : rgba(0,0,0,0.7);
   text-align : center;
 }
@@ -235,7 +348,7 @@ button:focus {
   font-size: 1em;
   width: 70%;
   margin: 5% auto;
-  font-family: "Nunito", sans-serif;
+  font-family: "Inter", sans-serif;
   color: rgba(0, 0, 0, 0.7);
   text-align: center;
 }
@@ -246,14 +359,14 @@ form {
 
 label {
   font-size: 1.2em;
-  font-family: "Nunito", sans-serif;
+  font-family: "Inter", sans-serif;
   color: rgba(0, 0, 0, 0.6);
   text-align: center;
 }
 
 input[type="text"] {
   font-size: 1.1em;
-  font-family: "Nunito", sans-serif;
+  font-family: "Inter", sans-serif;
   color: rgba(0, 0, 0, 0.6);
 }
 
@@ -348,23 +461,23 @@ input[type="text"] {
 #question {
   font-size: 1.3em;
   text-align: justify;
-  font-family: "Nunito", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 #quesNum {
   text-align: center;
   font-size: 1.6em;
-  font-family: "Nunito", sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 #answer {
   font-size: 1.4em;
-  font-family: "Nunito", sans-serif;
+  font-family: "Inter", sans-serif;
   z-index: 200;
 }
 #answerDescr {
   font-size: 1.2em;
-  font-family: "Nunito", sans-serif;
+  font-family: "Inter", sans-serif;
   text-align: center;
 }
 
@@ -373,7 +486,7 @@ input[type="text"] {
   position: relative;
   left: 50%;
   transform: translateX(-50%);
-  width: 40%;  
+  width: 40%;
   z-index: 200;
 }
 
@@ -436,4 +549,41 @@ a {
 }
 a:hover {
   text-decoration: none !important;
+}
+
+#auth {
+  position: fixed;
+  z-index: 30000;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#publishedLink,
+#error,
+#saveQuiz,
+#quizzes,
+#subheading-maj,
+#subheading-min {
+  transition: opacity 0.6s ease-in-out;
+  -webkit-transition: opacity 0.6s ease-in-out;
+  -moz-transition: opacity 0.6s ease-in-out;
+  -ms-transition: opacity 0.6s ease-in-out;
+  -o-transition: opacity 0.6s ease-in-out;
+}
+
+#refreshQuiz {
+  transition: opacity 3s ease-in-out;
+  -webkit-transition: opacity 3s ease-in-out;
+  -moz-transition: opacity 3s ease-in-out;
+  -ms-transition: opacity 3s ease-in-out;
+  -o-transition: opacity 3s ease-in-out;
+}
+
+.opacity-1 {
+  opacity: 1 !important;
+}
+
+.opacity-0 {
+  opacity: 0 !important;
 }
