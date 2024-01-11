@@ -31,6 +31,13 @@
 <body>
 
   <div id="auth">
+    <button type="button" name="button" class="pushable mt-4 opacity-0 d-flex mx-auto" id="refreshQuiz"
+    onclick="refreshQuiz()">
+    <span class="shadow"></span>
+    <span class="edge"></span>
+    <span class="front">
+      <i class="fa fa-refresh mr-2"></i><span id="refresh-label">Refresh</span></span>
+  </button>
     <button type="button" name="button" class="pushable mt-4 opacity-0 d-flex mx-auto" id="saveQuiz"
       onclick="saveQuiz()">
       <span class="shadow"></span>
@@ -38,13 +45,7 @@
       <span class="front">
         <i class="fa fa-upload mr-2"></i><span id="save-label">Publish</span></span>
     </button>
-    <button type="button" name="button" class="pushable mt-4 opacity-0 d-flex mx-auto" id="refreshQuiz"
-      onclick="refreshQuiz()">
-      <span class="shadow"></span>
-      <span class="edge"></span>
-      <span class="front">
-        <i class="fa fa-refresh mr-2"></i><span id="refresh-label">Refresh</span></span>
-    </button>
+   
     <div id="publishedLink" class="mt-2 text-center opacity-0 d-none">
       <i class="fa fa-check-circle fa-2x" aria-hidden="true"></i>
       <h6>Quiz published successfully at <br /><a href="" target="_blank" id="publishedLinkURL"></a></h6>

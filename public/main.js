@@ -529,7 +529,6 @@ function displaySheetCards(sheets) {
 
     let sheetDescription = document.createElement("p");
     sheetDescription.className = "card-text";
-
     if (sheet.modifiedTime) {
       sheetDescription.innerHTML =
         "Modified <strong>" +
@@ -546,6 +545,9 @@ function displaySheetCards(sheets) {
     sheetCard.addEventListener("click", function () {
       // On card click, fetch data for the particular spreadsheet
       fetchDataForSpreadsheet(sheet.id);
+      if (window.user) {
+        displaySaveQuiz();
+      }
       window.sheetId = sheet.id;
     });
 
@@ -567,7 +569,7 @@ function displayQuizCards(quizzes) {
   if (!quizzes.length) {
     let noResults = document.createElement("div");
     noResults.className = "col-md-12 my-4";
-    noResults.innerHTML = "No results found - try another search term.";
+    noResults.innerHTML = "No quizzes. Fetch a spreadsheet to create a quiz.";
     quizzesContainer.appendChild(noResults);
     return;
   }
@@ -598,7 +600,7 @@ function displayQuizCards(quizzes) {
     last_published_at
       ? (quizDescription.innerHTML =
           "Published <strong>" +
-          formatRelativeTime(new Date(last_published_at)) +
+          formatRelativeTime(new Date(last_published_at.seconds * 1000)) +
           "</strong>")
       : (quizDescription.innerHTML = "<strong>Draft</strong>");
 
@@ -610,7 +612,7 @@ function displayQuizCards(quizzes) {
     // Add click event listener to each card
     quizCard.addEventListener("click", function () {
       // On card click, fetch data for the particular spreadsheet
-      window.open(`http://localhost:5500/final/public/?id=${id}&mode=edit`);
+      window.open(`https://quizgen.app/?id=${id}&mode=edit`);
     });
 
     row.appendChild(quizCard);
@@ -694,16 +696,17 @@ function displayRefreshQuiz() {
 
 function hideSaveQuiz() {
   let saveQuiz = document.getElementById("saveQuiz");
-  saveQuiz.classList.remove("opacity-1");
-  saveQuiz.classList.add("opacity-0");
+  saveQuiz.classList.add("disabled");
+  let saveLabel = document.getElementById("save-label");
+  saveLabel.innerText = "Published";
 }
 
 function displayPublishedLink() {
   let publishedLink = document.getElementById("publishedLink");
   publishedLink.classList.remove("d-none");
   let publishedLinkURL = document.getElementById("publishedLinkURL");
-  publishedLinkURL.href = `http://localhost:5500/final/public/?id=${window.sheetId}`;
-  publishedLinkURL.innerText = `http://localhost:5500/final/public/?id=${window.sheetId}`;
+  publishedLinkURL.href = `https://quizgen.app/?id=${window.sheetId}`;
+  publishedLinkURL.innerText = `https://quizgen.app/?id=${window.sheetId}`;
   publishedLink.classList.remove("opacity-0");
   publishedLink.classList.add("opacity-1");
 }

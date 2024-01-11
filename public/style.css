@@ -232,33 +232,7 @@ button.pushable.disabled {
 .visible {
   opacity: 1;
 }
-@media screen and (max-width: 576px) {
-  html {
-    font-size: 12px;
-  }
-  .init {
-    margin: 7vh 0;
-  }
-  #subheading-maj {
-    margin: 4vh 0;
-  }
-  #subheading-ming {
-    margin: 2vh 0;
-  }
-  #slideshow {
-    margin: 4vh 0;
-  }
 
-  #slideshow .slide {
-    width: 100%;
-    left: 0;
-  }
-
-  .tut-elem {
-    flex: 0 0 100% !important;
-    max-width: 100% !important;
-  }
-}
 .tut-intro {
   font-family: "Inter", sans-serif;
 }
@@ -561,7 +535,6 @@ a:hover {
 
 #publishedLink,
 #error,
-#saveQuiz,
 #quizzes,
 #subheading-maj,
 #subheading-min {
@@ -572,6 +545,11 @@ a:hover {
   -o-transition: opacity 0.6s ease-in-out;
 }
 
+#publishedLinkURL {
+  white-space: nowrap;
+}
+
+#saveQuiz,
 #refreshQuiz {
   transition: opacity 3s ease-in-out;
   -webkit-transition: opacity 3s ease-in-out;
@@ -586,4 +564,36 @@ a:hover {
 
 .opacity-0 {
   opacity: 0 !important;
+}
+
+@media screen and (max-width: 576px) {
+  html {
+    font-size: 12px;
+  }
+  .init {
+    margin: 7vh 0;
+  }
+  #subheading-maj {
+    margin: 4vh 0;
+  }
+  #subheading-ming {
+    margin: 2vh 0;
+  }
+  #slideshow {
+    margin: 4vh 0;
+  }
+
+  #slideshow .slide {
+    width: 100%;
+    left: 0;
+  }
+
+  .tut-elem {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
+
+  #publishedLinkURL {
+    white-space: normal;
+  }
 }
