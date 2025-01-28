@@ -1,0 +1,173 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 248 90% 66%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 248 90% 66%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 248 90% 66%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 248 90% 66%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Question Editor styles */
+
+.image-resizer {
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+}
+
+.image-resizer img {
+  display: block;
+}
+
+.image-resizer .resize-handle {
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  width: 12px;
+  height: 12px;
+  background-color: rgb(59 130 246);
+  border: 2px solid white;
+  border-radius: 50%;
+  cursor: se-resize;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.image-resizer:hover .resize-handle {
+  opacity: 1;
+}
+
+.image-resizer .resize-handle:hover {
+  background-color: rgb(29 78 216);
+}
+
+/* Dark mode styles */
+.dark .image-resizer .resize-handle {
+  border-color: rgb(17 24 39);
+}
+
+/* Selected image styles */
+.ProseMirror-selectednode .image-resizer img {
+  @apply ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-gray-900;
+}
+
+.image-resizer .alignment-controls {
+  position: absolute;
+  top: -36px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 4px;
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.dark .image-resizer .alignment-controls {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.image-resizer:hover .alignment-controls {
+  opacity: 1;
+}
+
+.alignment-controls .alignment-button {
+  padding: 4px;
+  border-radius: 4px;
+  color: #64748b;
+  transition: all 0.2s;
+}
+
+.alignment-controls .alignment-button:hover {
+  background-color: #f1f5f9;
+  color: #0f172a;
+}
+
+.dark .alignment-controls .alignment-button:hover {
+  background-color: #374151;
+  color: #f1f5f9;
+}
+
+.alignment-controls .alignment-button.active {
+  color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.dark .alignment-controls .alignment-button.active {
+  color: #60a5fa;
+  background-color: #1e3a8a;
+}
+
+/* Support for aligned content */
+.ProseMirror {
+  [style*="text-align: center"] {
+    text-align: center;
+  }
+
+  [style*="text-align: right"] {
+    text-align: right;
+  }
+
+  [style*="text-align: left"] {
+    text-align: left;
+  }
+}

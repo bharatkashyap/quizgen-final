@@ -1,0 +1,20 @@
+# web/Dockerfile.dev
+FROM node:18-alpine
+
+# Install pnpm
+RUN npm install -g pnpm
+
+WORKDIR /app
+
+COPY package*.json ./
+COPY pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY . .
+
+RUN rm -rf node_modules/.prisma
+RUN rm -rf node_modules/@prisma/client
+
+RUN pnpm exec prisma generate --schema=./src/prisma/schema.prisma
+
+CMD ["pnpm", "dev"]

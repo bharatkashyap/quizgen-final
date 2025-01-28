@@ -1,0 +1,204 @@
+// prisma/schema.prisma
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  isPro         Boolean   @default(false)
+  accounts      Account[]
+  sessions      Session[]
+  
+  // Custom fields
+  createdLeagues     League[]    @relation("LeagueCreator")
+  createdQuestions   Question[]
+  subscriptions      LeagueSubscription[]
+  submissions        UserAnswer[]           
+  disputes           Dispute[]
+  notifications      Notification[]
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model League {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  previewImageUrl String?
+  isPrivate    Boolean  @default(false)
+  hasPaidTier Boolean  @default(false)
+  creatorId   String
+  creator     User     @relation("LeagueCreator", fields: [creatorId], references: [id])
+  questions   Question[]
+  showIntro Boolean @default(true)  
+  introContent String?  
+  unlockMode UnlockMode @default(LEVELS)
+  timedUnlockInterval TimedUnlockInterval?
+  startDate String?
+  subscribers LeagueSubscription[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model LeagueSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  leagueId  String
+  isPaid    Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
+  league    League   @relation(fields: [leagueId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, leagueId])
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  number      Int      @unique @default(autoincrement())
+  content     String
+  genre       String
+  previewImageUrl String?
+  mediaUrl    String?
+  mediaType   String?  
+  creatorId   String
+  creator      User  @relation(fields: [creatorId], references: [id])
+  leagueSlug   String
+  league      League   @relation(fields: [leagueSlug], references: [slug])
+  answer      Answer?
+  unlockAt    String?
+  draft       Boolean  @default(true)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([leagueSlug, number])
+}
+
+model Answer {
+  id          String   @id @default(cuid())
+  keywords    String
+  title       String
+  subtitle    String?
+  mediaUrl    String?
+  mediaType   String?
+  leagueSlug  String
+  questionNumber Int
+  creatorId   String
+  question    Question @relation(fields: [leagueSlug, questionNumber], references: [leagueSlug, number], onDelete: Cascade)
+  submissions UserAnswer[]
+  disputes    Dispute[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([leagueSlug, questionNumber])
+}
+
+model UserAnswer {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  answerId    String
+  answer      Answer   @relation(fields: [answerId], references: [id])
+  submission  String  
+  score       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Dispute {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  answerId    String
+  answer      Answer   @relation(fields: [answerId], references: [id])
+  description String
+  status      DisputeStatus @default(PENDING)
+  aiVerdict   String?
+  resolution  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  type        NotificationType
+  message     String
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+enum DisputeStatus {
+  PENDING
+  AI_EVALUATED
+  ACCEPTED
+  REJECTED
+}
+
+enum NotificationType {
+  DISPUTE_RESOLVED
+  SCORE_UPDATED
+  SYSTEM
+}
+
+enum UnlockMode {
+  LEVELS
+  FREE
+  TIMED
+}
+
+enum TimedUnlockInterval {
+  DAILY
+  WEEKLY
+  CUSTOM
+}
+
+// NextAuth required models
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type             String
+  provider         String
+  providerAccountId String
+  refresh_token    String? @db.Text
+  access_token     String? @db.Text
+  expires_at       Int?
+  token_type       String?
+  scope            String?
+  id_token         String? @db.Text
+  session_state    String?
+  user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

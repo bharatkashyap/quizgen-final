@@ -1,0 +1,56 @@
+{
+  "name": "quizgen",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@auth/prisma-adapter": "^2.7.4",
+    "@base-ui-components/react": "latest",
+    "@hookform/resolvers": "^3.3.4",
+    "@prisma/client": "^6.1.0",
+    "@tanstack/react-query": "^5.62.8",
+    "@tiptap/extension-image": "^2.10.4",
+    "@tiptap/extension-link": "^2.10.4",
+    "@tiptap/extension-placeholder": "^2.10.4",
+    "@tiptap/extension-text-align": "^2.10.4",
+    "@tiptap/extension-youtube": "^2.11.3",
+    "@tiptap/pm": "^2.10.4",
+    "@tiptap/react": "^2.10.4",
+    "@tiptap/starter-kit": "^2.10.4",
+    "clsx": "^2.1.1",
+    "imagekit": "^6.0.0",
+    "lucide-react": "^0.468.0",
+    "motion": "latest",
+    "next": "^15.1.1",
+    "next-auth": "^5.0.0-beta.25",
+    "next-themes": "^0.2.1",
+    "openai": "^4.77.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.50.0",
+    "react-rewards": "^2.1.0",
+    "sonner": "^1.4.0",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss": "^3.4.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^9.17.0",
+    "eslint-config-next": "15.1.1",
+    "postcss": "^8.4.35",
+    "prisma": "^6.1.0",
+    "typescript": "^5.3.3"
+  },
+  "prisma": {
+    "schema": "src/prisma/schema.prisma"
+  }
+}
