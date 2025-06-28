@@ -6,13 +6,19 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:reset": "prisma migrate reset",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
     "@base-ui-components/react": "latest",
     "@hookform/resolvers": "^3.3.4",
     "@prisma/client": "^6.1.0",
+    "@supabase/supabase-js": "^2.39.0",
     "@tanstack/react-query": "^5.62.8",
     "@tiptap/extension-image": "^2.10.4",
     "@tiptap/extension-link": "^2.10.4",
