@@ -9,7 +9,7 @@ import { prisma } from "../../lib/prisma";
 const questionUpsertSchema = z.object({
   content: z.string(),
   genre: z.string().min(1),
-  unlockAt: z.string().optional(),
+  unlockAt: z.string().optional().nullable(), // Allow null and undefined
   draft: z.string().transform((val) => val === "true"), // Transform string to boolean
 });
 
@@ -23,7 +23,7 @@ const validateUpsertFormData = (
     content: formData.get("content") as string,
     genre: formData.get("genre") as string,
     draft: formData.get("draft") as string,
-    unlockAt: formData.get("unlockAt") as string,
+    unlockAt: formData.get("unlockAt") as string | null,
   };
 
   const validated = questionUpsertSchema.safeParse(data);
@@ -46,13 +46,6 @@ async function prismaUpsertQuestion(
   creatorId: string,
   leagueSlug: string
 ) {
-  const baseData = {
-    content: data.content,
-    genre: data.genre,
-    unlockAt: data.unlockAt,
-    draft: data.draft,
-  };
-
   // First, get the league to get its ID
   const league = await prisma.league.findUnique({
     where: { slug: leagueSlug },
@@ -67,6 +60,13 @@ async function prismaUpsertQuestion(
   if (league.creatorId !== creatorId) {
     throw new Error("Unauthorized to modify questions in this league");
   }
+
+  const baseData = {
+    content: data.content,
+    genre: data.genre,
+    unlockAt: data.unlockAt || undefined, // Convert null to undefined for Prisma
+    draft: data.draft,
+  };
 
   if (questionNumber) {
     // Update existing question - find by league ID and number
