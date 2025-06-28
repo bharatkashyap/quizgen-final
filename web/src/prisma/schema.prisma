@@ -17,133 +17,200 @@ model User {
   emailVerified DateTime?
   image         String?
   isPro         Boolean   @default(false)
+  
+  // Relations
   accounts      Account[]
   sessions      Session[]
-  
-  // Custom fields
   createdLeagues     League[]    @relation("LeagueCreator")
-  createdQuestions   Question[]
+  createdQuestions   Question[]  @relation("QuestionCreator")
+  createdAnswers     Answer[]    @relation("AnswerCreator")
   subscriptions      LeagueSubscription[]
-  submissions        UserAnswer[]           
+  submissions        Submission[]           
   disputes           Dispute[]
   notifications      Notification[]
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model League {
-  id          String   @id @default(cuid())
-  name        String
-  slug        String   @unique
-  description String?
-  previewImageUrl String?
-  isPrivate    Boolean  @default(false)
-  hasPaidTier Boolean  @default(false)
-  creatorId   String
-  creator     User     @relation("LeagueCreator", fields: [creatorId], references: [id])
-  questions   Question[]
-  showIntro Boolean @default(true)  
-  introContent String?  
-  unlockMode UnlockMode @default(LEVELS)
+  id                  String   @id @default(cuid())
+  slug                String   @unique
+  name                String
+  description         String?
+  previewImageUrl     String?
+  isPrivate           Boolean  @default(false)
+  hasPaidTier         Boolean  @default(false)
+  showIntro           Boolean  @default(true)  
+  introContent        String?  
+  unlockMode          UnlockMode @default(LEVELS)
   timedUnlockInterval TimedUnlockInterval?
-  startDate String?
-  subscribers LeagueSubscription[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  startDate           String?
+  
+  // Foreign Keys
+  creatorId           String
+  
+  // Relations
+  creator             User     @relation("LeagueCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  questions           Question[]
+  answers             Answer[]
+  subscriptions       LeagueSubscription[]
+  
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([creatorId])
+  @@index([isPrivate])
 }
 
 model LeagueSubscription {
   id        String   @id @default(cuid())
+  isPaid    Boolean  @default(false)
+  
+  // Foreign Keys
   userId    String
   leagueId  String
-  isPaid    Boolean  @default(false)
-  user      User     @relation(fields: [userId], references: [id])
-  league    League   @relation(fields: [leagueId], references: [id])
+  
+  // Relations
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  league    League   @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([userId, leagueId])
+  @@index([userId])
+  @@index([leagueId])
 }
 
 model Question {
-  id          String   @id @default(cuid())
-  number      Int      @unique @default(autoincrement())
-  content     String
-  genre       String
+  id              String   @id @default(cuid())
+  number          Int      @default(autoincrement())
+  content         String
+  genre           String
   previewImageUrl String?
-  mediaUrl    String?
-  mediaType   String?  
-  creatorId   String
-  creator      User  @relation(fields: [creatorId], references: [id])
-  leagueSlug   String
-  league      League   @relation(fields: [leagueSlug], references: [slug])
-  answer      Answer?
-  unlockAt    String?
-  draft       Boolean  @default(true)
+  mediaUrl        String?
+  mediaType       String?
+  unlockAt        String?
+  draft           Boolean  @default(true)
+  
+  // Foreign Keys
+  creatorId       String
+  leagueId        String
+  
+  // Relations
+  creator         User     @relation("QuestionCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  league          League   @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  answer          Answer?
+  submissions     Submission[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([leagueId, number])
+  @@index([creatorId])
+  @@index([leagueId])
+  @@index([draft])
+  @@index([genre])
+}
+
+model Answer {
+  id             String   @id @default(cuid())
+  title          String
+  keywords       String
+  subtitle       String?
+  mediaUrl       String?
+  mediaType      String?
+  
+  // Foreign Keys
+  creatorId      String
+  questionId     String   @unique
+  leagueId       String
+  
+  // Relations
+  creator        User     @relation("AnswerCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+  question       Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  league         League   @relation(fields: [leagueId], references: [id], onDelete: Cascade)
+  submissions    Submission[]
+  disputes       Dispute[]
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([creatorId])
+  @@index([leagueId])
+}
+
+model Submission {
+  id          String   @id @default(cuid())
+  content     String  
+  score       Float
+  isCorrect   Boolean  @default(false)
+  
+  // Foreign Keys
+  userId      String
+  questionId  String
+  answerId    String
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answer      Answer   @relation(fields: [answerId], references: [id], onDelete: Cascade)
   
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@unique([leagueSlug, number])
-}
-
-model Answer {
-  id          String   @id @default(cuid())
-  keywords    String
-  title       String
-  subtitle    String?
-  mediaUrl    String?
-  mediaType   String?
-  leagueSlug  String
-  questionNumber Int
-  creatorId   String
-  question    Question @relation(fields: [leagueSlug, questionNumber], references: [leagueSlug, number], onDelete: Cascade)
-  submissions UserAnswer[]
-  disputes    Dispute[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@unique([leagueSlug, questionNumber])
-}
-
-model UserAnswer {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  answerId    String
-  answer      Answer   @relation(fields: [answerId], references: [id])
-  submission  String  
-  score       Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  @@unique([userId, questionId]) // One submission per user per question
+  @@index([userId])
+  @@index([questionId])
+  @@index([answerId])
+  @@index([isCorrect])
 }
 
 model Dispute {
   id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  answerId    String
-  answer      Answer   @relation(fields: [answerId], references: [id])
   description String
   status      DisputeStatus @default(PENDING)
   aiVerdict   String?
   resolution  String?
+  
+  // Foreign Keys
+  userId      String
+  answerId    String
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  answer      Answer   @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([answerId])
+  @@index([status])
 }
 
 model Notification {
   id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
   type        NotificationType
   message     String
   read        Boolean  @default(false)
+  
+  // Foreign Keys
+  userId      String
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@index([read])
+  @@index([type])
 }
 
-
+// Enums
 enum DisputeStatus {
   PENDING
   AI_EVALUATED
@@ -186,6 +253,7 @@ model Account {
   user             User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -194,6 +262,8 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model VerificationToken {
