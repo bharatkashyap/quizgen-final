@@ -73,7 +73,8 @@ export function getAnswerUnlockDate(
   }
 }
 
-export function isLocked(unlockDate: Date): boolean {
+export function isLocked(unlockDate: Date | null): boolean {
+  if (!unlockDate) return false;
   const now = new Date();
   return (
     now.getFullYear() < unlockDate.getFullYear() ||
@@ -85,7 +86,8 @@ export function isLocked(unlockDate: Date): boolean {
   );
 }
 
-export function isUnlockedToday(unlockDate: Date): boolean {
+export function isUnlockedToday(unlockDate: Date | null): boolean {
+  if (!unlockDate) return false;
   const now = new Date();
   return (
     now.getFullYear() === unlockDate.getFullYear() &&

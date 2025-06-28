@@ -4,7 +4,7 @@ export type Question = {
   content: string;
   genre: string;
   draft: boolean;
-  previewImageUrl?: string;
+  previewImageUrl?: string | null;
   mediaUrl?: string | null;
   mediaType?: string | null;
   unlockAt?: string;
@@ -24,7 +24,7 @@ export type Answer = {
   subtitle?: string | null;
   mediaUrl?: string | null;
   mediaType?: string | null;
-  questionId: string;
+  questionNumber: number;
   createdAt: Date;
   updatedAt: Date;
 };

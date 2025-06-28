@@ -34,7 +34,7 @@ const defaultDraftLeague: DraftLeague = {
   introContent: "",
   isPrivate: false,
   hasPaidTier: false,
-  unlockMode: "LEVELS",
+  unlockMode: "TIMED",
   startDate: "",
 };
 
@@ -42,12 +42,12 @@ const UNLOCK_INTERVALS = [
   {
     value: "DAILY",
     label: "Daily",
-    description: "One question per day",
+    description: "One level per day",
   },
   {
     value: "WEEKLY",
     label: "Weekly",
-    description: "One question per week",
+    description: "One level per week",
   },
   {
     value: "CUSTOM",
@@ -60,17 +60,17 @@ const UNLOCK_MODES = [
   {
     value: "FREE",
     label: "Free",
-    description: "All questions are unlocked",
+    description: "All levels are unlocked",
   },
   {
     value: "TIMED",
     label: "Timed",
-    description: "Questions unlock at specific times",
+    description: "Levels unlock at specific times",
   },
   {
-    value: "LEVELS",
-    label: "Levels",
-    description: "Next question unlocks when previous is solved",
+    value: "STEPS",
+    label: "Steps",
+    description: "Next level unlocks when previous is solved",
   },
 ] as const;
 
@@ -274,7 +274,7 @@ export default function LeagueForm({
                   setDraftLeague((prev) => ({
                     ...prev,
                     unlockMode: mode.value,
-                    ...(mode.value === "LEVELS"
+                    ...(mode.value === "STEPS"
                       ? { timedUnlockInterval: undefined, startDate: "" }
                       : {
                           timedUnlockInterval:
@@ -371,11 +371,7 @@ export default function LeagueForm({
                 {draftLeague?.startDate ? (
                   <>
                     First question will unlock on{" "}
-                    <span className="font-medium">
-                      {new Intl.DateTimeFormat(undefined, {
-                        dateStyle: "full",
-                      }).format(new Date(draftLeague.startDate))}
-                    </span>
+                    <span>{draftLeague.startDate}</span>
                   </>
                 ) : (
                   "When should the first question unlock?"

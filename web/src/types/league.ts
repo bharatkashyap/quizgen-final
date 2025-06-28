@@ -1,6 +1,6 @@
 import { User } from "./user";
 
-export type UnlockMode = "LEVELS" | "TIMED" | "FREE";
+export type UnlockMode = "STEPS" | "TIMED" | "FREE";
 export type TimedUnlockInterval = "DAILY" | "WEEKLY" | "CUSTOM";
 
 export interface League {
@@ -14,6 +14,7 @@ export interface League {
   hasPaidTier: boolean;
   unlockMode: UnlockMode;
   timedUnlockInterval?: TimedUnlockInterval | null;
+  previewImageUrl?: string | null;
   startDate?: string | null;
   creatorId: string;
   creator?: User;

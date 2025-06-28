@@ -1,13 +1,14 @@
 import { auth } from "../../../../../../../lib/auth";
 import { prisma } from "../../../../../../../lib/prisma";
 import { NextResponse } from "next/server";
+import { getAnswerUnlockDate, isLocked } from "../../../../../../../lib/utils";
 
 export async function GET(
   request: Request,
   { params }: { params: { slug: string; number: string } }
 ) {
   const session = await auth();
-  const { slug, number } = params;
+  const { slug, number } = await params;
 
   const answer = await prisma.answer.findUnique({
     where: {
@@ -23,6 +24,7 @@ export async function GET(
             select: {
               unlockMode: true,
               startDate: true,
+              timedUnlockInterval: true,
             },
           },
         },
@@ -39,26 +41,21 @@ export async function GET(
   if (answer.question.league.unlockMode === "FREE") {
     isUnlocked = true;
   } else if (answer.question.league.unlockMode === "TIMED") {
-    const startDate = answer.question.league.startDate
-      ? new Date(answer.question.league.startDate)
-      : null;
-    if (!startDate) {
+    if (!answer.question.league.startDate) {
       return new NextResponse("League start date does not exist", {
         status: 404,
       });
     }
-    const today = new Date();
-    const formattedDate = today.toLocaleDateString("en-CA", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    const currentDate = new Date(formattedDate);
-    const diffTime = currentDate.getTime() - startDate.getTime();
-    const daysSinceStart = Math.floor(diffTime / (1000 * 60 * 60 * 24));
 
-    isUnlocked = parseInt(number) <= daysSinceStart;
-  } else if (answer.question.league.unlockMode === "LEVELS") {
+    const unlockDate = getAnswerUnlockDate(
+      answer.question.league.startDate,
+      parseInt(number),
+      answer.question.league.timedUnlockInterval ?? "DAILY",
+      answer.question.unlockAt ?? ""
+    );
+
+    isUnlocked = !isLocked(unlockDate);
+  } else if (answer.question.league.unlockMode === "STEPS") {
     // TODO: Implement LEVELS unlock logic
     isUnlocked = false;
   }

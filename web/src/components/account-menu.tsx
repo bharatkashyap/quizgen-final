@@ -4,6 +4,7 @@ import { Menu } from "@base-ui-components/react/menu";
 import { signOut } from "next-auth/react";
 import { User, LogOut } from "lucide-react";
 import type { Session } from "next-auth";
+import { LeagueSelector } from "./league-selector";
 
 type AccountMenuProps = {
   session: Session;
@@ -25,7 +26,7 @@ export function AccountMenu({ session }: AccountMenuProps) {
       </Menu.Trigger>
 
       <Menu.Portal>
-        <Menu.Positioner className="z-50" sideOffset={8}>
+        <Menu.Positioner sideOffset={8}>
           <Menu.Popup
             className="min-w-[220px] rounded-md p-2 
             bg-white/50 dark:bg-gray-900/50 
@@ -40,6 +41,11 @@ export function AccountMenu({ session }: AccountMenuProps) {
               </p>
             </div>
 
+            <Menu.Group>
+              <Menu.GroupLabel className="m-2 text-xs">League</Menu.GroupLabel>
+              <LeagueSelector />
+              <Menu.Separator className="my-2 mx-1 h-px bg-gray-800" />
+            </Menu.Group>
             <Menu.Item
               onClick={() => signOut()}
               className="text-sm px-2 py-1.5 flex items-center gap-2               

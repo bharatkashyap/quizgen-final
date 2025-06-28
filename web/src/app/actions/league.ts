@@ -14,7 +14,7 @@ const leagueSchema = z.object({
   introContent: z.string().optional().nullable(),
   isPrivate: z.boolean(),
   hasPaidTier: z.boolean(),
-  unlockMode: z.enum(["LEVELS", "TIMED", "FREE"]),
+  unlockMode: z.enum(["STEPS", "TIMED", "FREE"]),
   timedUnlockInterval: z
     .enum(["DAILY", "WEEKLY", "CUSTOM"])
     .optional()

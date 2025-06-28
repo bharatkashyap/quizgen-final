@@ -72,31 +72,33 @@ export default function LeagueSettingsPage({
                 </button>
               )}
             />
-            <AlertDialog.Backdrop className="fixed inset-0 bg-black/50" />
-            <AlertDialog.Popup className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-lg bg-white dark:bg-gray-900 p-6">
-              <AlertDialog.Title className="text-lg font-semibold mb-4">
-                Are you sure?
-              </AlertDialog.Title>
-              <AlertDialog.Description className="text-gray-600 dark:text-gray-400 mb-6">
-                This action cannot be undone. This will permanently delete your
-                league and all its questions.
-              </AlertDialog.Description>
-              <form action={handleDelete} className="flex gap-4 justify-end">
-                <AlertDialog.Close
-                  render={() => (
-                    <button
-                      type="button"
-                      onClick={() => setShowDeleteDialog(false)}
-                      className="px-4 py-2 rounded-md border border-gray-200 dark:border-gray-800 
+            <AlertDialog.Portal>
+              <AlertDialog.Backdrop className="fixed inset-0 bg-black/50" />
+              <AlertDialog.Popup className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-lg bg-white dark:bg-gray-900 p-6">
+                <AlertDialog.Title className="text-lg font-semibold mb-4">
+                  Are you sure?
+                </AlertDialog.Title>
+                <AlertDialog.Description className="text-gray-600 dark:text-gray-400 mb-6">
+                  This action cannot be undone. This will permanently delete
+                  your league and all its questions.
+                </AlertDialog.Description>
+                <form action={handleDelete} className="flex gap-4 justify-end">
+                  <AlertDialog.Close
+                    render={() => (
+                      <button
+                        type="button"
+                        onClick={() => setShowDeleteDialog(false)}
+                        className="px-4 py-2 rounded-md border border-gray-200 dark:border-gray-800 
                       bg-white/50 dark:bg-gray-900/50 hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                    >
-                      Cancel
-                    </button>
-                  )}
-                />
-                <DeleteButton />
-              </form>
-            </AlertDialog.Popup>
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  />
+                  <DeleteButton />
+                </form>
+              </AlertDialog.Popup>
+            </AlertDialog.Portal>
           </AlertDialog.Root>
         </div>
       </div>

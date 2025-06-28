@@ -53,11 +53,11 @@ export function QuestionList({ leagueSlug }: { leagueSlug: string }) {
   if (isLoading) {
     return (
       <div>
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-6 mx-3">
           <Skeleton className="h-8 w-32" />
           <Skeleton className="h-9 w-28" />
         </div>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mx-3">
           {[...Array(3)].map((_, i) => (
             <Skeleton key={i} className="h-32 w-full" />
           ))}
@@ -119,9 +119,6 @@ export function QuestionList({ leagueSlug }: { leagueSlug: string }) {
         ) : (
           questions?.map((question) => {
             const unlockDate = getUnlockDate(question);
-            if (!unlockDate) {
-              throw new Error("League doesn't have a start date.");
-            }
             const locked = isLocked(unlockDate);
             return (
               <div

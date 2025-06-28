@@ -259,56 +259,58 @@ export function MenuBar({
         open={showYoutubeDialog}
         onOpenChange={setShowYoutubeDialog}
       >
-        <AlertDialog.Backdrop className="fixed inset-0 bg-black/50" />
-        <AlertDialog.Popup className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-lg bg-white dark:bg-gray-900 p-6 z-50">
-          <AlertDialog.Title className="text-lg font-semibold mb-4">
-            Add YouTube Video
-          </AlertDialog.Title>
-          <AlertDialog.Description className="text-gray-600 dark:text-gray-400 mb-6">
-            Enter the URL of the YouTube video you want to embed.
-          </AlertDialog.Description>
+        <AlertDialog.Portal>
+          <AlertDialog.Backdrop className="fixed inset-0 bg-black/50" />
+          <AlertDialog.Popup className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-lg bg-white dark:bg-gray-900 p-6 z-50">
+            <AlertDialog.Title className="text-lg font-semibold mb-4">
+              Add YouTube Video
+            </AlertDialog.Title>
+            <AlertDialog.Description className="text-gray-600 dark:text-gray-400 mb-6">
+              Enter the URL of the YouTube video you want to embed.
+            </AlertDialog.Description>
 
-          <Field.Root className="mb-6">
-            <Field.Label>YouTube URL</Field.Label>
-            <Input
-              type="url"
-              value={youtubeUrl}
-              onChange={(e) => setYoutubeUrl(e.target.value)}
-              placeholder="https://www.youtube.com/watch?v=..."
-              className="w-full px-3 py-2 rounded-md border border-gray-200 
+            <Field.Root className="mb-6">
+              <Field.Label>YouTube URL</Field.Label>
+              <Input
+                type="url"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                placeholder="https://www.youtube.com/watch?v=..."
+                className="w-full px-3 py-2 rounded-md border border-gray-200 
                 dark:border-gray-800 bg-white dark:bg-gray-900
                 focus:outline-none focus:ring-2 focus:ring-blue-500/20 
                 focus:border-blue-500 dark:focus:border-blue-500"
-            />
-          </Field.Root>
+              />
+            </Field.Root>
 
-          <div className="flex gap-4 justify-end">
-            <AlertDialog.Close
-              render={() => (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setYoutubeUrl("");
-                    setShowYoutubeDialog(false);
-                  }}
-                  className="px-4 py-2 rounded-md border border-gray-200 dark:border-gray-800 
+            <div className="flex gap-4 justify-end">
+              <AlertDialog.Close
+                render={() => (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setYoutubeUrl("");
+                      setShowYoutubeDialog(false);
+                    }}
+                    className="px-4 py-2 rounded-md border border-gray-200 dark:border-gray-800 
                     bg-white/50 dark:bg-gray-900/50 hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                >
-                  Cancel
-                </button>
-              )}
-            />
-            <button
-              type="button"
-              onClick={addYoutubeVideo}
-              disabled={!youtubeUrl.trim()}
-              className="px-4 py-2 rounded-md bg-blue-500 text-white 
+                  >
+                    Cancel
+                  </button>
+                )}
+              />
+              <button
+                type="button"
+                onClick={addYoutubeVideo}
+                disabled={!youtubeUrl.trim()}
+                className="px-4 py-2 rounded-md bg-blue-500 text-white 
                 hover:bg-blue-600 disabled:opacity-50"
-            >
-              Add Video
-            </button>
-          </div>
-        </AlertDialog.Popup>
+              >
+                Add Video
+              </button>
+            </div>
+          </AlertDialog.Popup>
+        </AlertDialog.Portal>
       </AlertDialog.Root>
     </>
   );
@@ -503,11 +505,11 @@ function EditorHeader({
             />
           ) : (
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              {number && startDate
+              {startDate
                 ? getUnlockDate(
                     startDate,
                     timedUnlockInterval,
-                    parseInt(number)
+                    parseInt(number || "1")
                   )?.toLocaleDateString("en-US", {
                     weekday: "short",
                     month: "short",
@@ -619,6 +621,7 @@ export default function QuestionEditor({
   const [selectedUnlockAt, setSelectedUnlockAt] = React.useState(
     question?.unlockAt
   );
+
   const [initialUnlockAt, setInitialUnlockAt] = React.useState(
     question?.unlockAt
   );
@@ -682,7 +685,6 @@ export default function QuestionEditor({
     const contentChanged = editor.getHTML() !== question.content;
     const genreChanged = selectedGenre !== question.genre;
     const unlockChanged = selectedUnlockAt !== question.unlockAt;
-    console.log({ contentChanged, genreChanged, unlockChanged });
     return contentChanged || genreChanged || unlockChanged;
   }, [editor?.getHTML(), question, selectedGenre, league, selectedUnlockAt]);
 
@@ -692,7 +694,21 @@ export default function QuestionEditor({
         formData.append("content", editor.getHTML());
         if (selectedUnlockAt) {
           formData.append("unlockAt", selectedUnlockAt);
+        } else if (league?.unlockMode === "TIMED" && !selectedUnlockAt) {
+          formData.append(
+            "unlockAt",
+            getUnlockDate(
+              league?.startDate || "",
+              league?.timedUnlockInterval,
+              parseInt(number || "1")
+            )?.toLocaleDateString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+            }) || ""
+          );
         }
+
         formData.append("genre", selectedGenre);
       }
 
@@ -785,31 +801,34 @@ export default function QuestionEditor({
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
       >
-        <AlertDialog.Backdrop className="fixed inset-0 bg-black/50" />
-        <AlertDialog.Popup className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-lg bg-white dark:bg-gray-900 p-6">
-          <AlertDialog.Title className="text-lg font-semibold mb-4">
-            Delete Question
-          </AlertDialog.Title>
-          <AlertDialog.Description className="text-gray-600 dark:text-gray-400 mb-6">
-            Are you sure you want to delete this question? This will delete all
-            related answer and submission data. This action cannot be undone.
-          </AlertDialog.Description>
-          <form action={handleDelete} className="flex gap-4 justify-end">
-            <AlertDialog.Close
-              render={() => (
-                <button
-                  type="button"
-                  onClick={() => setShowDeleteDialog(false)}
-                  className="px-4 py-2 rounded-md border border-gray-200 dark:border-gray-800 
+        <AlertDialog.Portal>
+          <AlertDialog.Backdrop className="fixed inset-0 bg-black/50" />
+          <AlertDialog.Popup className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md rounded-lg bg-white dark:bg-gray-900 p-6">
+            <AlertDialog.Title className="text-lg font-semibold mb-4">
+              Delete Question
+            </AlertDialog.Title>
+            <AlertDialog.Description className="text-gray-600 dark:text-gray-400 mb-6">
+              Are you sure you want to delete this question? This will delete
+              all related answer and submission data. This action cannot be
+              undone.
+            </AlertDialog.Description>
+            <form action={handleDelete} className="flex gap-4 justify-end">
+              <AlertDialog.Close
+                render={() => (
+                  <button
+                    type="button"
+                    onClick={() => setShowDeleteDialog(false)}
+                    className="px-4 py-2 rounded-md border border-gray-200 dark:border-gray-800 
                   bg-white/50 dark:bg-gray-900/50 hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                >
-                  Cancel
-                </button>
-              )}
-            />
-            <DeleteButton />
-          </form>
-        </AlertDialog.Popup>
+                  >
+                    Cancel
+                  </button>
+                )}
+              />
+              <DeleteButton />
+            </form>
+          </AlertDialog.Popup>
+        </AlertDialog.Portal>
       </AlertDialog.Root>
     </div>
   );

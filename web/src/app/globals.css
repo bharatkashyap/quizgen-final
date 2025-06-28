@@ -171,3 +171,39 @@ html {
     text-align: left;
   }
 }
+
+@keyframes rotate-border {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.animate-border-glow {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: conic-gradient(
+    from var(--angle),
+    rgba(59, 130, 246, 0.1) 0deg,
+    rgba(147, 51, 234, 0.6) 45deg,
+    rgba(59, 130, 246, 0.1) 90deg,
+    rgba(59, 130, 246, 0.1) 360deg
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 2px;
+}
+
+.group:hover .animate-border-glow {
+  opacity: 1;
+  animation: rotate-border 1.5s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}

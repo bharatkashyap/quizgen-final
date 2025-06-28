@@ -1,5 +1,4 @@
 # docker-compose.dev.yml
-version: "3.8"
 services:
   postgres:
     image: postgres:15
@@ -14,26 +13,26 @@ services:
     networks:
       - quizgen-network
 
-  web:
-    build:
-      context: ./web
-      dockerfile: Dockerfile.dev
-    ports:
-      - "3000:3000"
-    environment:
-      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
-      - AUTH_URL=${AUTH_URL}
-      - AUTH_SECRET=${AUTH_SECRET}
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-    volumes:
-      - ./web:/app
-      - /app/node_modules
-      - /app/.next
-    depends_on:
-      - postgres
-    networks:
-      - quizgen-network
+  # web:
+  #   build:
+  #     context: ./web
+  #     dockerfile: Dockerfile.dev
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:${POSTGRES_PORT}/${POSTGRES_DB}?schema=public
+  #     - AUTH_URL=${AUTH_URL}
+  #     - AUTH_SECRET=${AUTH_SECRET}
+  #     - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+  #     - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+  #   volumes:
+  #     - ./web:/app
+  #     - /app/node_modules
+  #     - /app/.next
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - quizgen-network
 
 networks:
   quizgen-network:

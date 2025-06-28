@@ -8,7 +8,7 @@ export default function GetStarted() {
   const router = useRouter();
   const handleGetStarted = async () => {
     if (!session) {
-      await signIn("google", { callbackUrl: "/league" });
+      await signIn("google", { callbackUrl: "/leagues" });
       return;
     }
     router.push("/leagues");

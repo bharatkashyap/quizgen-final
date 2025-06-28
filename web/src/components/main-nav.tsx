@@ -13,7 +13,7 @@ export async function MainNav() {
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
             Quizgen
           </span>
-          <div className="hidden sm:block">
+          <div className="hidden lg:block">
             <LeagueSelector />
           </div>
         </div>
@@ -21,10 +21,13 @@ export async function MainNav() {
           <LeagueTitle />
         </div>
         <div className="flex justify-end items-center space-x-4">
-          <div className="block sm:hidden">
-            <LeagueSelector />
-          </div>
-          {session ? <AccountMenu session={session} /> : null}
+          {session ? (
+            <AccountMenu session={session} />
+          ) : (
+            <div className="block lg:hidden">
+              <LeagueSelector />
+            </div>
+          )}
         </div>
       </div>
     </nav>

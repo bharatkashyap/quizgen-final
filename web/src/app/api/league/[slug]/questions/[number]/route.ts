@@ -9,20 +9,28 @@ export async function GET(
   const session = await auth();
   const { slug, number } = await params;
 
-  const questions = await prisma.question.findUnique({
+  const league = await prisma.league.findUnique({
     where: {
-      number: parseInt(number),
-      league: {
-        slug,
-      },
-    },
-    include: {
-      league: true,
+      slug,
     },
   });
-  if (questions?.league?.isPrivate && !session?.user) {
+
+  if (!league) {
+    return new NextResponse("Not found", { status: 404 });
+  }
+
+  if (league.isPrivate && !session?.user) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
+
+  const questions = await prisma.question.findUnique({
+    where: {
+      leagueId_number: {
+        leagueId: league.id,
+        number: parseInt(number),
+      },
+    },
+  });
 
   return NextResponse.json(questions);
 }

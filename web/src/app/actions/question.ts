@@ -23,6 +23,7 @@ const validateUpsertFormData = (
     content: formData.get("content") as string,
     genre: formData.get("genre") as string,
     draft: formData.get("draft") as string,
+    unlockAt: formData.get("unlockAt") as string,
   };
 
   const validated = questionUpsertSchema.safeParse(data);
@@ -52,15 +53,41 @@ async function prismaUpsertQuestion(
     draft: data.draft,
   };
 
+  // First, get the league to get its ID
+  const league = await prisma.league.findUnique({
+    where: { slug: leagueSlug },
+    select: { id: true, creatorId: true },
+  });
+
+  if (!league) {
+    throw new Error("League not found");
+  }
+
+  // Check if user has permission to modify this league
+  if (league.creatorId !== creatorId) {
+    throw new Error("Unauthorized to modify questions in this league");
+  }
+
   if (questionNumber) {
-    // Update existing question
-    return prisma.question.update({
+    // Update existing question - find by league ID and number
+    const existingQuestion = await prisma.question.findFirst({
       where: {
-        leagueSlug_number: {
-          leagueSlug,
-          number: questionNumber,
-        },
+        leagueId: league.id,
+        number: questionNumber,
       },
+    });
+
+    if (!existingQuestion) {
+      throw new Error("Question not found");
+    }
+
+    // Check if user created this question
+    if (existingQuestion.creatorId !== creatorId) {
+      throw new Error("Unauthorized to modify this question");
+    }
+
+    return prisma.question.update({
+      where: { id: existingQuestion.id },
       data: baseData,
     });
   }
@@ -70,7 +97,7 @@ async function prismaUpsertQuestion(
     data: {
       ...baseData,
       creatorId,
-      leagueSlug,
+      leagueId: league.id,
     },
   });
 }
@@ -137,8 +164,12 @@ export async function upsertQuestion(
       id: question.id,
     };
   } catch (error) {
+    console.error("Error upserting question:", error);
     return {
-      message: `Failed to ${questionNumber ? "update" : "create"} question`,
+      message:
+        error instanceof Error
+          ? error.message
+          : `Failed to ${questionNumber ? "update" : "create"} question`,
     };
   }
 }
@@ -158,6 +189,7 @@ export async function deleteQuestion(formData: FormData) {
     // First fetch the question to check ownership
     const question = await prisma.question.findUnique({
       where: { id: validated.data.questionId },
+      include: { league: true },
     });
 
     if (!question) {
@@ -168,6 +200,14 @@ export async function deleteQuestion(formData: FormData) {
       return {
         success: false,
         message: "Unauthorized: You can only delete your own questions",
+      };
+    }
+
+    // Verify the league slug matches (extra security)
+    if (question.league.slug !== validated.data.leagueSlug) {
+      return {
+        success: false,
+        message: "Question does not belong to the specified league",
       };
     }
 
