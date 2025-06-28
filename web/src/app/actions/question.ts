@@ -23,6 +23,7 @@ const validateUpsertFormData = (
     content: formData.get("content") as string,
     genre: formData.get("genre") as string,
     draft: formData.get("draft") as string,
+    unlockAt: formData.get("unlockAt") as string,
   };
 
   const validated = questionUpsertSchema.safeParse(data);
@@ -53,24 +54,40 @@ async function prismaUpsertQuestion(
   };
 
   if (questionNumber) {
-    // Update existing question
-    return prisma.question.update({
+    // Update existing question - find by leagueSlug and number
+    const existingQuestion = await prisma.question.findFirst({
       where: {
-        leagueSlug_number: {
-          leagueSlug,
-          number: questionNumber,
-        },
+        league: { slug: leagueSlug },
+        number: questionNumber,
       },
+      include: { league: true },
+    });
+
+    if (!existingQuestion) {
+      throw new Error("Question not found");
+    }
+
+    return prisma.question.update({
+      where: { id: existingQuestion.id },
       data: baseData,
     });
   }
 
-  // Create new question
+  // Create new question - need to get league ID first
+  const league = await prisma.league.findUnique({
+    where: { slug: leagueSlug },
+    select: { id: true },
+  });
+
+  if (!league) {
+    throw new Error("League not found");
+  }
+
   return prisma.question.create({
     data: {
       ...baseData,
       creatorId,
-      leagueSlug,
+      leagueId: league.id,
     },
   });
 }
@@ -137,6 +154,7 @@ export async function upsertQuestion(
       id: question.id,
     };
   } catch (error) {
+    console.error("Error upserting question:", error);
     return {
       message: `Failed to ${questionNumber ? "update" : "create"} question`,
     };
