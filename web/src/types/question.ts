@@ -15,8 +15,6 @@ export type Question = {
 
 export type QuestionsResponse = Question[];
 
-// ... existing MediaType and Question types ...
-
 export type Answer = {
   id: string;
   title: string;
@@ -40,10 +38,12 @@ export interface DraftAnswer {
 
 export type Submission = {
   id: string;
-  userId: string;
-  answerId: string;
-  submission: string;
+  content: string;
   score: number;
+  isCorrect: boolean;
+  userId: string;
+  questionId: string;
+  answerId: string;
   createdAt: Date;
   updatedAt: Date;
   user: {
