@@ -20,6 +20,7 @@ export interface League {
   creator?: User;
   createdAt: Date;
   updatedAt: Date;
+  questionCount?: number;
 }
 
 export interface DraftLeague {

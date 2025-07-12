@@ -125,12 +125,9 @@ export function QuestionList({ leagueSlug }: { leagueSlug: string }) {
                 key={question.id}
                 className={`relative ${
                   isUnlockedToday(unlockDate)
-                    ? `
-                    ring-2 rounded-lg ring-yellow-400/50 dark:ring-yellow-500/50
-                    shadow-[0_0_15px_rgba(250,204,21,0.3)]
-                    dark:shadow-[0_0_15px_rgba(234,179,8,0.3)]
+                    ? `                                                            
                     animate-pulse-subtle
-                    scale-[1.02]
+                    scale-[1.02]                                     
                     z-10
                   `
                     : ""

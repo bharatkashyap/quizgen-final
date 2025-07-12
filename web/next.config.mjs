@@ -14,7 +14,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "fal.media",
+        hostname: "ik.imagekit.io",
       },
     ],
   },

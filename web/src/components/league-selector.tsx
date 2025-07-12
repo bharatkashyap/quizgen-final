@@ -58,7 +58,7 @@ export function LeagueSelector() {
       </Select.Trigger>
 
       <Select.Portal>
-        <Select.Positioner sideOffset={4}>
+        <Select.Positioner sideOffset={8} className="z-50">
           <Select.Popup
             className="z-[100] min-w-[250px] overflow-hidden rounded-md 
               border bg-white/50 backdrop-blur-xl p-1 

@@ -7,24 +7,26 @@ import { prisma } from "../../lib/prisma";
 import { normalizeText } from "./utils";
 import type { Answer } from "../../types/question";
 
-const userAnswerUpsertSchema = z.object({
-  submission: z.string().min(1),
+const submissionUpsertSchema = z.object({
+  content: z.string().min(1),
   leagueSlug: z.string().min(1),
   questionNumber: z.number().min(1),
+  existingSubmissionId: z.string().optional(),
 });
 
 const validateUpsertFormData = (
   formData: FormData
 ):
-  | { success: true; data: z.infer<typeof userAnswerUpsertSchema> }
+  | { success: true; data: z.infer<typeof submissionUpsertSchema> }
   | { success: false; error: string } => {
   const data = {
-    submission: formData.get("submission") as string,
+    content: formData.get("content") as string,
     leagueSlug: formData.get("leagueSlug") as string,
     questionNumber: parseInt(formData.get("questionNumber") as string, 10),
+    existingSubmissionId: formData.get("existingSubmissionId") as string,
   };
 
-  const validated = userAnswerUpsertSchema.safeParse(data);
+  const validated = submissionUpsertSchema.safeParse(data);
   if (!validated.success) {
     return {
       success: false,
@@ -41,55 +43,31 @@ async function getAnswer(
   leagueSlug: string,
   questionNumber: number
 ): Promise<Answer | null> {
+  const league = await prisma.league.findUnique({
+    where: {
+      slug: leagueSlug,
+    },
+  });
+  if (!league) {
+    throw new Error("Provided league does not exist");
+  }
+  const question = await prisma.question.findUnique({
+    where: {
+      leagueId_number: {
+        leagueId: league.id,
+        number: questionNumber,
+      },
+    },
+  });
+  if (!question) {
+    throw new Error("Provided question does not exist");
+  }
   return prisma.answer.findUnique({
     where: {
-      leagueSlug_questionNumber: {
-        leagueSlug,
-        questionNumber,
-      },
+      leagueId: league.id,
+      questionId: question.id,
     },
   });
-}
-
-async function checkEligibility(
-  userId: string,
-  leagueSlug: string,
-  questionNumber: number
-) {
-  const answer = await getAnswer(leagueSlug, questionNumber);
-  if (!answer) {
-    return {
-      eligible: false,
-      reason: "This question does not exist in this league",
-    };
-  }
-
-  // Check if user has already viewed the answer
-  const viewedAnswer = await prisma.viewedAnswer.findUnique({
-    where: {
-      userId_answerId: {
-        userId,
-        answerId: answer.id,
-      },
-    },
-  });
-
-  // Check if user has already submitted an answer (but we'll allow updates)
-  const existingSubmission = await prisma.userAnswer.findFirst({
-    where: {
-      userId,
-      answerId: answer.id,
-    },
-  });
-
-  return {
-    eligible: !viewedAnswer, // Only viewedAnswer makes user ineligible
-    reason: viewedAnswer
-      ? "You cannot submit an answer because you have already viewed the solution"
-      : null,
-    answer,
-    existingSubmission,
-  };
 }
 
 function calculateScore(
@@ -104,77 +82,121 @@ function calculateScore(
     return { score: 1.0, isCorrect: true };
   }
 
-  // Calculate title similarity (50% weight)
-  const titleWords = new Set(normalizedTitle.split(" "));
+  console.log(normalizedSubmission, normalizedTitle);
+
   const submissionWords = new Set(normalizedSubmission.split(" "));
-  const titleIntersection = new Set(
-    Array.from(submissionWords).filter((x) => titleWords.has(x))
-  );
-  const titleUnion = new Set([
-    ...Array.from(submissionWords),
-    ...Array.from(titleWords),
-  ]);
-  const titleSimilarity = titleIntersection.size / titleUnion.size;
 
-  let weightedScore = titleSimilarity;
-
-  // Calculate keywords similarity (20% weight)
+  // Calculate keywords similarity (20% threshold)
   if (answer.keywords) {
+    console.log(answer.keywords);
     const keywordsList = answer.keywords
       .split(",")
       .map((k) => normalizeText(k));
-    const keywordScores = keywordsList.map((keyword) => {
-      const keywordWords = new Set(keyword.split(" "));
-      const intersection = new Set(
-        Array.from(submissionWords).filter((x) => keywordWords.has(x))
-      );
-      const union = new Set([
-        ...Array.from(submissionWords),
-        ...Array.from(keywordWords),
-      ]);
-      return intersection.size / union.size;
-    });
-    const bestKeywordScore = Math.max(0, ...keywordScores);
 
-    // Calculate weighted score
-    weightedScore = titleSimilarity * 0.5 + bestKeywordScore * 0.5;
+    const keywordWords = new Set(keywordsList);
+    const intersection = submissionWords.intersection(keywordWords);
+    const keywordScore = intersection.size / keywordWords.size;
+
+    console.log(intersection, keywordWords, submissionWords, keywordScore);
+
+    if (keywordScore > 0.2) {
+      return {
+        score: 1.0,
+        isCorrect: true,
+      };
+    }
   }
 
   return {
-    score: weightedScore,
-    isCorrect: weightedScore >= 0.8,
+    score: 0,
+    isCorrect: false,
   };
 }
 
-async function prismaUpsertUserAnswer(
-  data: z.infer<typeof userAnswerUpsertSchema>,
-  answer: Pick<Answer, "id" | "title" | "subtitle" | "keywords">,
-  userId: string,
-  existingSubmission: { id: string } | null
+async function prismaUpsertSubmission(
+  data: z.infer<typeof submissionUpsertSchema>,
+  answer: Pick<Answer, "id" | "title" | "subtitle" | "keywords" | "questionId">,
+  userId: string
 ) {
-  const { score, isCorrect } = calculateScore(data.submission, answer);
+  const { score, isCorrect } = calculateScore(data.content, answer);
 
-  if (existingSubmission) {
-    return prisma.userAnswer.update({
-      where: { id: existingSubmission.id },
+  if (data.existingSubmissionId) {
+    return prisma.submission.update({
+      where: { id: data.existingSubmissionId },
       data: {
-        submission: data.submission,
+        content: data.content,
+        isCorrect,
         score,
       },
     });
   }
 
-  return prisma.userAnswer.create({
+  return prisma.submission.create({
     data: {
-      submission: data.submission,
+      content: data.content,
       score,
+      isCorrect,
       answerId: answer.id,
+      questionId: answer.questionId,
       userId,
     },
   });
 }
 
-export async function upsertUserAnswer(formData: FormData) {
+export async function setAnswerViewed(
+  leagueSlug: string,
+  questionNumber: number
+) {
+  const session = await auth();
+  if (!session?.user?.id) {
+    return {
+      success: false,
+      message: "You must be logged in to submit an answer",
+    };
+  }
+
+  if (!leagueSlug || !questionNumber) {
+    return {
+      success: false,
+      message: "Can not find this question.",
+    };
+  }
+
+  const answer = await getAnswer(leagueSlug, questionNumber);
+
+  if (!answer) {
+    return {
+      success: false,
+      message: "Can not find the answer to this question.",
+    };
+  }
+
+  try {
+    await prisma.submission.create({
+      data: {
+        content: "",
+        score: 0,
+        answerId: answer.id,
+        questionId: answer.questionId,
+        userId: session.user.id,
+        nonCompetitive: true,
+      },
+    });
+
+    return {
+      success: true,
+      message: "Answer marked as viewed successfully",
+    };
+  } catch (error) {
+    console.error("Failed to mark answer as viewed:", error);
+    return {
+      success: false,
+      message: "Failed to mark answer as viewed. Please try again later.",
+    };
+  }
+}
+
+export async function upsertSubmission(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) {
     return {
@@ -188,39 +210,38 @@ export async function upsertUserAnswer(formData: FormData) {
     return { success: false, message: validated.error };
   }
 
-  const { eligible, reason, answer, existingSubmission } =
-    await checkEligibility(
-      session.user.id,
-      validated.data.leagueSlug,
-      validated.data.questionNumber
-    );
+  const answer = await getAnswer(
+    validated.data.leagueSlug,
+    validated.data.questionNumber
+  );
 
-  if (!eligible || !answer) {
+  if (!answer) {
     return {
       success: false,
       message:
-        reason || "You are not eligible to submit an answer for this question",
+        "An error occurred in fetching the answer. Please report this to the developer",
     };
   }
 
   try {
-    const userAnswer = await prismaUpsertUserAnswer(
+    const newSubmission = await prismaUpsertSubmission(
       validated.data,
       answer,
-      session.user.id,
-      existingSubmission
+      session.user.id
     );
 
-    revalidatePath(`/league/${validated.data.leagueSlug}/questions`);
+    revalidatePath(
+      `/league/${validated.data.leagueSlug}/questions/${validated.data.questionNumber}`
+    );
 
     return {
       success: true,
-      message: existingSubmission
+      message: validated.data.existingSubmissionId
         ? "Answer updated successfully"
         : "Answer submitted successfully",
-      id: userAnswer.id,
-      score: userAnswer.score,
-      isCorrect: userAnswer.score >= 0.8,
+      id: newSubmission.id,
+      score: newSubmission.score,
+      isCorrect: newSubmission.score >= 0.8,
     };
   } catch (error) {
     console.error("Failed to submit user answer:", error);

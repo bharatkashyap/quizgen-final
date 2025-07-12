@@ -49,7 +49,7 @@ export function QuestionPreview({
         "hover:border-gray-300 dark:hover:border-gray-700",
         "shadow-sm hover:shadow backdrop-blur-sm",
         "transition-all hover:translate-y-[-1px]",
-        "overflow-hidden",
+        "overflow-hidden h-full",
         className
       )}
     >

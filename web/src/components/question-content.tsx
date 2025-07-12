@@ -25,13 +25,43 @@ export default function QuestionContent({
     enabled: shouldFetch,
   });
 
-  const content = shouldFetch ? question?.content : html;
-
   // Check if this question has been viewed before
   const storageKey = `question-viewed-${leagueSlug}-${number}`;
   const [shouldAnimate, setShouldAnimate] = React.useState(true);
   const [isAnimating, setIsAnimating] = React.useState(false);
 
+  const originalParts = React.useMemo(
+    () => question?.content?.split(/(<[^>]*>)/g),
+    [question]
+  );
+
+  const formattedContent = React.useMemo(() => {
+    if (!originalParts) return question?.content;
+    return originalParts
+      .map((part) => {
+        let alignmentClass = "";
+        if (part.startsWith("<img")) {
+          const alignmentMatch = part.match(
+            /alignment=["'](center|left|right)["']/i
+          );
+          if (alignmentMatch) {
+            if (alignmentMatch[1] === "center")
+              alignmentClass = "mx-auto block";
+            else if (alignmentMatch[1] === "left")
+              alignmentClass = "ml-0 mr-auto block";
+            else if (alignmentMatch[1] === "right")
+              alignmentClass = "ml-auto mr-0 block";
+          }
+        }
+        return part.replace(/>$/, ` class="${alignmentClass}">`);
+      })
+      .join("");
+  }, [originalParts, question]);
+
+  const formattedParts = React.useMemo(
+    () => formattedContent?.split(/(<[^>]*>)/g),
+    [formattedContent]
+  );
   React.useEffect(() => {
     const hasBeenViewed = localStorage.getItem(storageKey);
     if (hasBeenViewed === "true") {
@@ -74,20 +104,37 @@ export default function QuestionContent({
   );
 
   const animatedContent = React.useMemo(() => {
-    if (!question?.content) return "";
-    if (!shouldAnimate) return question.content;
+    if (!formattedContent) return "";
+    if (!shouldAnimate) return formattedContent;
 
     let elementCount = 0;
-    const parts = question.content.split(/(<[^>]*>)/g);
 
-    return parts
+    if (!formattedParts) return formattedContent;
+
+    return formattedParts
       .map((part) => {
         // Handle opening tags for lists and media
         if (part.match(/<(li|img|video|iframe)[^>]*>/i)) {
           const delay = elementCount++ * 250;
-          return part.replace(
-            />$/,
-            ` class="animate-fade-reveal opacity-0" style="animation-delay: ${delay}ms">`
+          // Extract existing class attribute
+          const classMatch = part.match(/class=["']([^"']*)["']/);
+          const existingClass = classMatch ? classMatch[1] : "";
+          // Merge animation classes with existing
+          const mergedClass =
+            `${existingClass} animate-fade-reveal opacity-0`.trim();
+          // Replace or add class attribute
+          let replacedPart;
+          if (classMatch) {
+            replacedPart = part.replace(
+              /class=["'][^"']*["']/,
+              `class=\"${mergedClass}\"`
+            );
+          } else {
+            replacedPart = part.replace(/>$/, ` class=\"${mergedClass}\"`);
+          }
+          return replacedPart.replace(
+            />$/, // in case no class existed
+            ` style=\"animation-delay: ${delay}ms\">`
           );
         }
 
@@ -153,7 +200,7 @@ export default function QuestionContent({
       )}
       <div
         dangerouslySetInnerHTML={{
-          __html: animatedContent,
+          __html: animatedContent || "",
         }}
         onAnimationEnd={handleAnimationEnd}
         className="prose dark:prose-invert prose-sm sm:prose-base mx-auto preview-content"

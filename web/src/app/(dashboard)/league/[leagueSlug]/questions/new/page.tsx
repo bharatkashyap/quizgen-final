@@ -7,6 +7,7 @@ export default async function QuestionListPage({
   params: Promise<{ leagueSlug: string }>;
 }) {
   const slug = (await params).leagueSlug;
+
   return (
     <>
       <QuestionNav leagueSlug={slug} />

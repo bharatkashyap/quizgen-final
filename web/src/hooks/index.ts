@@ -61,6 +61,18 @@ export function useQuestions(
   );
 }
 
+export function useSubmission(
+  leagueSlug: string,
+  questionNumber?: string,
+  options?: QueryObserverOptions<Submission>
+) {
+  return useFetch<Submission>(
+    `/api/league/${leagueSlug}/questions/${questionNumber}/submission`,
+    [`submission/${leagueSlug}/${questionNumber}`],
+    options
+  );
+}
+
 export function useSubmissions(
   leagueSlug: string,
   questionNumber?: string,

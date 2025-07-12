@@ -10,20 +10,23 @@ interface LoadingButtonProps
 }
 
 export function LoadingButton({
-  loading = false,
+  loading,
   loadingText = "Loading...",
   children,
   className = "",
   ...props
 }: LoadingButtonProps) {
   const { pending = false } = useFormStatus();
+  const finalLoadingState = loading ?? pending;
+  const finalDisabledState = props.disabled ?? finalLoadingState;
+
   return (
     <button
       {...props}
-      disabled={pending || loading || props.disabled}
+      disabled={finalDisabledState}
       className={`px-4 py-2 rounded-md disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
-      {loading || pending ? (
+      {finalLoadingState ? (
         <span className="flex items-center gap-2">
           <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
             <circle

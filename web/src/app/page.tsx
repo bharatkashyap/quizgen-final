@@ -1,12 +1,11 @@
 import * as React from "react";
 import { MainNav } from "../components/main-nav";
 import GetStarted from "../components/get-started";
-import { auth } from "../lib/auth";
 import Image from "next/image";
 
 export default async function Home() {
   return (
-    <div className="min-h-screen bg-background relative md:overflow-hidden">
+    <div className="min-h-screen bg-background relative overflow-hidden scrollbar-stable w-fill-available">
       {/* Decorative background elements */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 blur-3xl" />
@@ -24,7 +23,7 @@ export default async function Home() {
                 Duolingo for anything
               </h1>
               <p className="text-xl text-muted-foreground font-light">
-                Build leagues with leaderboard, submissions and manage your own
+                Build multiplayer leagues with leaderboards for your own
                 audience!
               </p>
               <div className="flex flex-row items-center gap-4">
@@ -52,7 +51,7 @@ export default async function Home() {
                   </div>
                   <div className="relative h-36 md:h-54 lg:h-72 rounded-lg overflow-hidden">
                     <Image
-                      src="https://fal.media/files/elephant/MBiGkVdDAIf5fTNaSBA00_4344fe724de44221a53cff063db35fa2.jpg"
+                      src="https://ik.imagekit.io/dailyquizquestion/dqq_cover?updatedAt=1751118980022"
                       alt="Daily Quiz Preview"
                       fill
                       className="object-cover object-center"
@@ -68,7 +67,7 @@ export default async function Home() {
                   </div>
 
                   <button className="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg font-medium text-white">
-                    Try Today's Question
+                    Try Today's Level!
                   </button>
                 </div>
 

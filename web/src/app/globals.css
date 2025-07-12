@@ -58,8 +58,13 @@
   }
 }
 
-html {
+/* Utility styles */
+.scrollbar-stable {
   scrollbar-gutter: stable;
+}
+
+.w-fill-available {
+  width: -webkit-fill-available;
 }
 
 /* Question Editor styles */

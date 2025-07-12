@@ -10,25 +10,65 @@ export async function GET(
   const session = await auth();
   const { slug, number } = await params;
 
-  const answer = await prisma.answer.findUnique({
+  const league = await prisma.league.findUnique({
     where: {
-      leagueSlug_questionNumber: {
-        leagueSlug: slug,
-        questionNumber: parseInt(number),
+      slug,
+    },
+  });
+
+  if (!league) {
+    return new NextResponse("No such league found", { status: 404 });
+  }
+
+  const question = await prisma.question.findUnique({
+    where: {
+      leagueId_number: {
+        leagueId: league.id,
+        number: parseInt(number),
       },
     },
-    include: {
-      question: {
-        include: {
-          league: {
-            select: {
-              unlockMode: true,
-              startDate: true,
-              timedUnlockInterval: true,
-            },
-          },
-        },
-      },
+  });
+
+  if (!question) {
+    return new NextResponse(
+      "No question for the specified leage and number found",
+      { status: 404 }
+    );
+  }
+
+  let isUnlocked = false;
+
+  switch (league.unlockMode) {
+    case "FREE":
+      isUnlocked = true;
+      break;
+    case "TIMED":
+      if (!league.startDate) {
+        return new NextResponse("League start date does not exist", {
+          status: 404,
+        });
+      }
+      const unlockDate = getAnswerUnlockDate(
+        league.startDate,
+        parseInt(number),
+        league.timedUnlockInterval ?? "DAILY",
+        question.unlockAt || ""
+      );
+
+      isUnlocked = !isLocked(unlockDate);
+      break;
+    case "STEPS":
+      // TODO: Implement LEVELS unlock logic
+      isUnlocked = false;
+  }
+
+  if (!isUnlocked && !session?.user) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+
+  const answer = await prisma.answer.findUnique({
+    where: {
+      questionId: question.id,
     },
   });
 
@@ -36,37 +76,8 @@ export async function GET(
     return new NextResponse("Answer not found", { status: 404 });
   }
 
-  let isUnlocked = false;
-
-  if (answer.question.league.unlockMode === "FREE") {
-    isUnlocked = true;
-  } else if (answer.question.league.unlockMode === "TIMED") {
-    if (!answer.question.league.startDate) {
-      return new NextResponse("League start date does not exist", {
-        status: 404,
-      });
-    }
-
-    const unlockDate = getAnswerUnlockDate(
-      answer.question.league.startDate,
-      parseInt(number),
-      answer.question.league.timedUnlockInterval ?? "DAILY",
-      answer.question.unlockAt ?? ""
-    );
-
-    isUnlocked = !isLocked(unlockDate);
-  } else if (answer.question.league.unlockMode === "STEPS") {
-    // TODO: Implement LEVELS unlock logic
-    isUnlocked = false;
-  }
-
-  if (!isUnlocked && !session?.user) {
-    return new NextResponse("Unauthorized", { status: 401 });
-  }
-
-  const { question, ...answerData } = answer;
   return NextResponse.json({
-    ...answerData,
+    ...answer,
     isUnlocked,
   });
 }

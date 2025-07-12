@@ -13,9 +13,6 @@ export async function MainNav() {
           <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-500">
             Quizgen
           </span>
-          <div className="hidden lg:block">
-            <LeagueSelector />
-          </div>
         </div>
         <div className="flex justify-center">
           <LeagueTitle />

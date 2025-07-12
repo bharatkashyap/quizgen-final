@@ -1,5 +1,6 @@
 export const GENRES = [
   "Movies",
+  "Pop Culture",
   "Music",
   "Science",
   "Television",
@@ -13,6 +14,7 @@ export const GENRES = [
 
 export const GENRE_COLORS = new Map([
   ["movies", { text: "text-pink-300", bg: "bg-pink-900" }],
+  ["pop culture", { text: "text-teal-300", bg: "bg-teal-900" }],
   ["music", { text: "text-violet-300", bg: "bg-violet-900" }],
   ["science", { text: "text-cyan-300", bg: "bg-cyan-900" }],
   ["television", { text: "text-amber-300", bg: "bg-amber-900" }],

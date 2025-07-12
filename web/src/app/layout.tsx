@@ -9,7 +9,7 @@ const publicSans = Public_Sans({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Quizgen",
-  description: "Host quiz leagues online",
+  description: "Host leagues online",
 };
 
 export default function RootLayout({

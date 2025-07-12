@@ -32,7 +32,7 @@ export default function GetStarted() {
                     translate-x-[-100%] group-hover:translate-x-[100%]
                     transition-all duration-1000 ease-out"
       />
-      Get Started
+      Build your own
     </button>
   );
 }

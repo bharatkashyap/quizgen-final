@@ -4,6 +4,7 @@ import { z } from "zod";
 import { revalidatePath } from "next/cache";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
+import { uploadToImageKit } from "../../lib/imageKit";
 
 // Schema for question data
 const questionUpsertSchema = z.object({
@@ -11,6 +12,7 @@ const questionUpsertSchema = z.object({
   genre: z.string().min(1),
   unlockAt: z.string().optional(),
   draft: z.string().transform((val) => val === "true"), // Transform string to boolean
+  previewImageUrl: z.string().optional(),
 });
 
 // Validate form data
@@ -51,6 +53,7 @@ async function prismaUpsertQuestion(
     genre: data.genre,
     unlockAt: data.unlockAt,
     draft: data.draft,
+    previewImageUrl: data.previewImageUrl,
   };
 
   // First, get the league to get its ID
@@ -66,6 +69,21 @@ async function prismaUpsertQuestion(
   // Check if user has permission to modify this league
   if (league.creatorId !== creatorId) {
     throw new Error("Unauthorized to modify questions in this league");
+  }
+
+  // Process image uploads
+  try {
+    const { newContent, imageUrls } = await processImagesInHtmlContent(
+      baseData.content,
+      questionNumber?.toString() || "1",
+      leagueSlug
+    );
+    baseData.content = newContent;
+    if (!baseData.previewImageUrl && imageUrls && imageUrls.length)
+      baseData.previewImageUrl = imageUrls[0];
+  } catch (error) {
+    // Don't do anything, since the image processing failure isn't the end of the world
+    // This will re-run the next time the user saves the question
   }
 
   if (questionNumber) {
@@ -132,6 +150,65 @@ const validateDeleteFormData = (
   return { success: true, data: validated.data };
 };
 
+/**
+ * Finds all <img> tags in the HTML content whose src is not from imagekit.io,
+ * uploads them in parallel to ImageKit, and replaces their URLs in the content.
+ * Uses Promise.allSettled for parallel uploads.
+ */
+export async function processImagesInHtmlContent(
+  htmlContent: string,
+  questionNumber: string,
+  leagueSlug: string
+): Promise<{ newContent: string; imageUrls?: string[] }> {
+  const imageUrlRegex = /<img[^>]+src="([^"]+)"/g;
+  const matches = Array.from(htmlContent.matchAll(imageUrlRegex));
+  const urlSet = new Set<string>();
+
+  for (const match of matches) {
+    console.log("match", match);
+    const url = match[1];
+    if (!url.includes("imagekit.io")) {
+      urlSet.add(url);
+    }
+  }
+
+  if (urlSet.size === 0) return { newContent: htmlContent };
+
+  let count = 1;
+
+  const uploadPromises: Promise<{ url: string; type: string }>[] = [];
+  urlSet.forEach(async (url) => {
+    const fileName = `question-${questionNumber}-${count}-${Date.now()}`;
+    count++;
+
+    // Use 'questions' as the default folder
+    uploadPromises.push(
+      uploadToImageKit(url, fileName, `questions/${leagueSlug}`)
+    );
+  });
+  try {
+    const results = await Promise.allSettled(uploadPromises);
+    const imageSet: string[] = [];
+
+    let newContent = htmlContent;
+    let urlArr = Array.from(urlSet);
+    results.forEach((result, idx) => {
+      if (result.status === "fulfilled") {
+        const originalUrl = urlArr[idx];
+        const newUrl = result.value.url;
+        imageSet.push(newUrl);
+        newContent = newContent.replaceAll(originalUrl, newUrl);
+      }
+    });
+
+    return { newContent: newContent, imageUrls: imageSet };
+  } catch (error) {
+    throw new Error(
+      error instanceof Error ? error.message : "Failed to process image uploads"
+    );
+  }
+}
+
 // Action handler
 export async function upsertQuestion(
   formData: FormData,
@@ -174,6 +251,7 @@ export async function upsertQuestion(
   }
 }
 
+// Action handler
 export async function deleteQuestion(formData: FormData) {
   const session = await auth();
   if (!session?.user?.id) {

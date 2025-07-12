@@ -47,13 +47,14 @@ model League {
   unlockMode          UnlockMode @default(TIMED)
   timedUnlockInterval TimedUnlockInterval?
   startDate           String?
+  questionCount       Int     @default(0)
   
   // Foreign Keys
   creatorId           String
   
   // Relations
   creator             User     @relation("LeagueCreator", fields: [creatorId], references: [id], onDelete: Cascade)
-  questions           Question[]
+  questions           Question[]  
   answers             Answer[]
   subscriptions       LeagueSubscription[]
   
@@ -147,6 +148,7 @@ model Submission {
   content     String  
   score       Float
   isCorrect   Boolean  @default(false)
+  nonCompetitive Boolean @default(false)
   
   // Foreign Keys
   userId      String

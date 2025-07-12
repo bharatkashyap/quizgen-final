@@ -418,7 +418,7 @@ function EditorHeader({
   startDate,
   timedUnlockInterval,
   setSelectedGenre,
-  leagueSlug,
+  questionCount,
   setShowDeleteDialog,
 }: {
   isLoading: boolean;
@@ -433,15 +433,13 @@ function EditorHeader({
   timedUnlockInterval?: TimedUnlockInterval | null;
   startDate?: string | null;
   setSelectedGenre: (genre: string) => void;
-  leagueSlug: string;
+  questionCount?: number;
   setShowDeleteDialog: (show: boolean) => void;
 }) {
-  const router = useRouter();
-
   return (
     <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
       <div className="flex items-center gap-4">
-        <Field.Root className="w-[100px]">
+        <Field.Root className="max-w-[150px]">
           {isLoading ? (
             <Skeleton className="h-10 w-full" />
           ) : (
@@ -458,7 +456,7 @@ function EditorHeader({
                   flex items-center justify-between"
               >
                 <Select.Value placeholder="Select a genre" />
-                <Select.Icon>
+                <Select.Icon className="ml-1">
                   <ChevronDown className="h-4 w-4 text-gray-500 dark:text-gray-400" />
                 </Select.Icon>
               </Select.Trigger>
@@ -509,7 +507,9 @@ function EditorHeader({
                 ? getUnlockDate(
                     startDate,
                     timedUnlockInterval,
-                    parseInt(number || "1")
+                    parseInt(
+                      number || ((questionCount || 0) + 1).toLocaleString()
+                    )
                   )?.toLocaleDateString("en-US", {
                     weekday: "short",
                     month: "short",
@@ -565,9 +565,10 @@ function EditorHeader({
               name="draft"
               value="false"
               loadingText="Publishing..."
+              loading={isLoading}
               className="px-4 py-2 text-sm bg-gradient-to-r from-blue-500 to-purple-500 text-white
               hover:from-blue-600 hover:to-purple-600 disabled:opacity-50"
-              disabled={isLoading || !hasChanges}
+              disabled={isLoading || (!hasChanges && !isDraft)}
             >
               Save and Publish
             </LoadingButton>
@@ -700,7 +701,9 @@ export default function QuestionEditor({
             getUnlockDate(
               league?.startDate || "",
               league?.timedUnlockInterval,
-              parseInt(number || "1")
+              parseInt(
+                number || (league?.questionCount || 0 + 1)?.toLocaleString()
+              )
             )?.toLocaleDateString("en-US", {
               weekday: "short",
               month: "short",
@@ -771,7 +774,7 @@ export default function QuestionEditor({
             initialGenre={initialGenre}
             hasChanges={hasChanges}
             setSelectedGenre={setSelectedGenre}
-            leagueSlug={leagueSlug}
+            questionCount={league?.questionCount}
             setShowDeleteDialog={setShowDeleteDialog}
           />
 

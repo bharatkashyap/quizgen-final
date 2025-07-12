@@ -1,37 +1,39 @@
 "use client";
 import * as React from "react";
-import { Lock } from "lucide-react";
-import { useReward } from "react-rewards";
-import { useLeague } from "../hooks";
+import { useLeague, useSubmission } from "../hooks";
 import { Input } from "@base-ui-components/react/input";
 import { Dialog } from "@base-ui-components/react/dialog";
 import { Tooltip } from "@base-ui-components/react/tooltip";
-// import { submitAnswer } from "../actions/submit-answer";
 import { LoadingButton } from "./ui/loading-button";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { IntroModal } from "./intro-modal";
 import { AnswerModal } from "./answer-modal";
+import { toast } from "sonner";
+import {
+  upsertSubmission,
+  setAnswerViewed as setAnswerViewedServer,
+} from "../app/actions/submission";
+import { CheckCircle } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface QuestionSubmissionProps {
   leagueSlug: string;
   number: string;
-  isLocked?: boolean;
-  lastSubmission?: string;
-  correctAnswer?: string;
-  unlockTime?: string; // ISO string for timed leagues
 }
 
 export default function QuestionSubmission({
   leagueSlug,
   number,
-  isLocked = false,
-  lastSubmission = "",
-  correctAnswer,
-  unlockTime,
 }: QuestionSubmissionProps) {
+  const router = useRouter();
   const { data: session } = useSession();
   const { data: league } = useLeague(leagueSlug);
-  const [submission, setSubmission] = React.useState(lastSubmission);
+  const { data: lastSubmission, refetch } = useSubmission(leagueSlug, number);
+  const formRef = React.useRef<HTMLFormElement | null>(null);
+  const [submissionContent, setSubmissionContent] = React.useState<string>("");
+  const [hasCorrectSubmission, setHasCorrectSubmission] =
+    React.useState<boolean>(false);
   const [answerViewed, setAnswerViewed] = React.useState(false);
   const [answerVisible, setAnswerVisible] = React.useState(false);
   const [isCorrect, setIsCorrect] = React.useState(false);
@@ -43,31 +45,29 @@ export default function QuestionSubmission({
     if (localStorageState && JSON.parse(localStorageState)) {
       setAnswerViewed(JSON.parse(localStorageState));
     }
-  }, []);
-
-  React.useEffect(() => {
-    if (answerVisible) {
-      setAnswerViewed(true);
-      localStorage.setItem(`answer-viewed-${leagueSlug}-${number}`, "true");
-      if (session?.user.id) {
-        // TODO: Mark answer viewed on the server, disallow future submissions for this question
+    // Show AnswerModal if ?viewAnswer=1 is present
+    // Also populate submissionContent if `content` is present (for sign-in and redirect cases)
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("viewAnswer") === "1") {
+        localStorage.setItem(`answer-viewed-${leagueSlug}-${number}`, "true");
+        setAnswerVisible(true);
+        setAnswerViewed(true);
+      }
+      const content = params.get("content");
+      const authRedirect = params.get("authRedirect");
+      if (content && authRedirect) {
+        setSubmissionContent(content);
+        // Some delay to be able to fetch existing submission
+        setTimeout(() => {
+          if (formRef.current) {
+            formRef.current.submit();
+          }
+        }, 1000);
+        () => {};
       }
     }
-  }, [answerVisible]);
-
-  const { reward, isAnimating } = useReward(
-    `reward-${leagueSlug}-${number}`,
-    "confetti",
-    {
-      elementCount: 200,
-      spread: 120,
-      angle: 90,
-      startVelocity: 45,
-      decay: 0.91,
-      lifetime: 250,
-      colors: ["#F7B801", "#F18701", "#F35B04", "#F5F770", "#72F753"],
-    }
-  );
+  }, []);
 
   const isCreator = React.useMemo(
     () => league?.creatorId === session?.user?.id,
@@ -89,15 +89,34 @@ export default function QuestionSubmission({
     if (!hasSeenWarning) {
       setShowAnswerWarning(true);
     } else {
-      setAnswerVisible(true);
+      handleActuallyViewAnswer();
     }
   };
 
   const handleConfirmViewAnswer = () => {
-    localStorage.setItem(`answer-warning-seen-${leagueSlug}`, "true");
     setShowAnswerWarning(false);
-    setAnswerVisible(true);
+    handleActuallyViewAnswer();
   };
+
+  const handleActuallyViewAnswer = React.useCallback(() => {
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (!url.searchParams.get("viewAnswer")) {
+        url.searchParams.set("viewAnswer", "1");
+        window.history.replaceState({}, "", url.toString());
+      }
+    }
+    localStorage.setItem(`answer-viewed-${leagueSlug}-${number}`, "true");
+    setAnswerVisible(true);
+    setAnswerViewed(true);
+    handleMarkNonCompetitive();
+  }, [lastSubmission]);
+
+  const handleMarkNonCompetitive = React.useCallback(() => {
+    if (!lastSubmission) {
+      setAnswerViewedServer(leagueSlug, parseInt(number));
+    }
+  }, [lastSubmission]);
 
   React.useEffect(() => {
     if (league?.showIntro) {
@@ -108,10 +127,68 @@ export default function QuestionSubmission({
     }
   }, [league?.showIntro, leagueSlug, session?.user?.id, league?.creatorId]);
 
-  const hasChanges = submission !== lastSubmission;
+  React.useEffect(() => {
+    if (lastSubmission) {
+      setSubmissionContent(lastSubmission.content);
+      setHasCorrectSubmission(lastSubmission.isCorrect);
+    }
+  }, [lastSubmission]);
+
+  const hasChanges = submissionContent !== lastSubmission?.content;
+
+  const onSubmit = React.useCallback(
+    async (formData: FormData) => {
+      if (session) return;
+      else {
+        const callbackUrl = new URL(
+          window.location.pathname + window.location.search,
+          window.location.origin
+        );
+        callbackUrl.searchParams.set(
+          "content",
+          JSON.stringify(formData.get("content"))
+        );
+        callbackUrl.searchParams.set("authRedirect", "1");
+
+        await signIn("google", {
+          callbackUrl: callbackUrl.href,
+        });
+      }
+      try {
+        if (lastSubmission) {
+          formData.append("existingSubmissionId", lastSubmission.id);
+        }
+        const response = await upsertSubmission(formData);
+        if (response.message) {
+          if (!response.id) {
+            toast.error(response.message);
+            return;
+          }
+          toast.success(response.message);
+          setIsCorrect(response.isCorrect);
+          refetch();
+          handleActuallyViewAnswer();
+        }
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    [lastSubmission]
+  );
 
   return (
     <div>
+      {/* Back button top left */}
+      <button
+        type="button"
+        onClick={() => router.push(`/dashboard/league/${leagueSlug}/questions`)}
+        className="fixed top-16 xs:left-2 md:left-12 z-50 flex items-center gap-2 px-3 py-2 rounded-lg bg-black/60 hover:bg-black/80 text-white text-sm font-medium shadow transition-colors"
+        aria-label="Back to questions"
+      >
+        <ArrowLeft size={20} />
+        Back
+      </button>
       {league?.showIntro &&
         league.introContent &&
         showIntroModal &&
@@ -163,87 +240,103 @@ export default function QuestionSubmission({
         />
       )}
 
-      <form
-        action={() => {
-          return new Promise((resolve, reject) => {
-            setTimeout(() => {
-              const isCorrect =
-                submission.toLowerCase().trim() ===
-                correctAnswer?.toLowerCase().trim();
-              setIsCorrect(isCorrect);
-              if (isCorrect) {
-                reward();
-                setAnswerVisible(true);
-              }
-              resolve();
-            }, 1000);
-          });
-        }}
-        className="mt-8 space-y-6"
-      >
-        <div className="max-w-xl mx-auto w-full relative">
-          <span
-            id={`reward-${leagueSlug}-${number}`}
-            className="absolute left-1/2 bottom-full z-50"
-          />
-          <Input
-            name="submission"
-            value={submission}
-            onChange={(e) => setSubmission(e.target.value)}
-            placeholder="Enter your answer..."
-            className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg 
-            focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-          />
-          <input type="hidden" name="leagueSlug" value={leagueSlug} />
-          <input type="hidden" name="number" value={number} />
-          <input
-            type="hidden"
-            name="answerViewed"
-            value={JSON.stringify(answerViewed)}
-          />
+      {/* Minimal addition for correct submission UI */}
+      {hasCorrectSubmission ? (
+        <div className="max-w-xl mx-auto w-full mt-8 relative">
+          <div className="relative">
+            <Input
+              name="content"
+              value={submissionContent}
+              readOnly
+              className="w-full px-4 py-2 bg-white/5 border-2 border-green-500 rounded-lg text-green-200 pr-12 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500 cursor-default"
+            />
+            <CheckCircle
+              size={24}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 pointer-events-none"
+              aria-label="Correct answer"
+            />
+          </div>
+          <div className="flex justify-center gap-4 mt-6">
+            <button
+              type="button"
+              disabled
+              className="min-w-[100px] h-10 px-4 rounded-lg font-medium bg-green-500 text-white opacity-60 cursor-not-allowed"
+            >
+              Submit
+            </button>
+            <button
+              type="button"
+              disabled
+              className="min-w-[100px] h-10 px-4 rounded-lg font-medium border border-yellow-500 text-yellow-500 opacity-60 cursor-not-allowed"
+            >
+              View Answer
+            </button>
+          </div>
         </div>
+      ) : null}
 
-        <div className="flex justify-center gap-4">
-          <Tooltip.Provider>
-            <Tooltip.Root>
-              <Tooltip.Trigger
-                render={
-                  <LoadingButton
-                    disabled={!hasChanges || isAnimating}
-                    className={`min-w-[100px] h-10 px-4 rounded-lg font-medium
+      {!hasCorrectSubmission && (
+        <form action={onSubmit} ref={formRef} className="mt-8 space-y-6">
+          <div className="max-w-xl mx-auto w-full relative">
+            <span
+              id={`reward-${leagueSlug}-${number}`}
+              className="absolute left-1/2 bottom-full z-50"
+            />
+            <Input
+              name="content"
+              value={submissionContent}
+              onChange={(e) => setSubmissionContent(e.target.value)}
+              placeholder="Enter your answer..."
+              className="w-full px-4 py-2 bg-white/5 border border-white/10 rounded-lg 
+            focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+            />
+            <input type="hidden" name="leagueSlug" value={leagueSlug} />
+            <input type="hidden" name="questionNumber" value={number} />
+          </div>
+
+          <div className="flex justify-center gap-4">
+            <Tooltip.Provider>
+              <Tooltip.Root>
+                <Tooltip.Trigger
+                  render={
+                    <LoadingButton
+                      disabled={!hasChanges}
+                      className={`min-w-[100px] h-10 px-4 rounded-lg font-medium
                   ${
-                    hasChanges && !isAnimating
+                    hasChanges
                       ? "bg-yellow-500 hover:bg-yellow-600 text-black"
                       : "bg-white/5 text-white/50 cursor-not-allowed"
                   } transition-colors`}
-                  >
-                    Submit
-                  </LoadingButton>
-                }
-              />
+                    >
+                      Submit
+                    </LoadingButton>
+                  }
+                />
 
-              <Tooltip.Portal>
-                <Tooltip.Positioner>
-                  <Tooltip.Popup className="bg-white/10 backdrop-blur-sm text-white p-2 text-xs rounded-lg">
-                    You can submit multiple times and your submissions are
-                    private!
-                  </Tooltip.Popup>
-                </Tooltip.Positioner>
-              </Tooltip.Portal>
-            </Tooltip.Root>
-          </Tooltip.Provider>
-          <button
-            type="button"
-            onClick={handleViewAnswer}
-            className={`min-w-[100px] h-10 px-4 rounded-lg font-medium
+                <Tooltip.Portal>
+                  <Tooltip.Positioner>
+                    <Tooltip.Popup className="bg-white/10 backdrop-blur-sm text-white p-2 text-xs rounded-lg">
+                      You can submit multiple times and your submissions are
+                      only visible to the league creator!
+                    </Tooltip.Popup>
+                  </Tooltip.Positioner>
+                </Tooltip.Portal>
+              </Tooltip.Root>
+            </Tooltip.Provider>
+            <button
+              type="button"
+              onClick={handleViewAnswer}
+              className={`min-w-[100px] h-10 px-4 rounded-lg font-medium
               border border-yellow-500 text-yellow-500 
               hover:border-yellow-600 hover:text-yellow-600
-              transition-colors`}
-          >
-            View Answer
-          </button>
-        </div>
-      </form>
+              transition-colors
+              ${answerViewed ? "opacity-60 grayscale" : ""}`}
+            >
+              View Answer
+            </button>
+          </div>
+        </form>
+      )}
     </div>
   );
 }

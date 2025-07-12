@@ -16,14 +16,7 @@ export default async function QuestionListPage({
           {number}
         </div>
         <QuestionContent leagueSlug={leagueSlug} number={number} />
-        <QuestionSubmission
-          leagueSlug={leagueSlug}
-          number={number}
-          // These props will come from your data fetching logic
-          isLocked={false}
-          lastSubmission=""
-          correctAnswer="Example answer"
-        />
+        <QuestionSubmission leagueSlug={leagueSlug} number={number} />
       </div>
     </div>
   );

@@ -24,7 +24,7 @@ export type Answer = {
   subtitle?: string | null;
   mediaUrl?: string | null;
   mediaType?: string | null;
-  questionNumber: number;
+  questionId: string;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -41,16 +41,13 @@ export interface DraftAnswer {
 export type Submission = {
   id: string;
   userId: string;
-  answerId: string;
-  submission: string;
+  questionId: string;
+  content: string;
   score: number;
+  isCorrect: boolean;
+  nonCompetitive: boolean;
   createdAt: Date;
   updatedAt: Date;
-  user: {
-    id: string;
-    name: string | null;
-    image?: string | null;
-  };
 };
 
 // Add response types for API calls

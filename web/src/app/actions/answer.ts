@@ -3,14 +3,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
-import ImageKit from "imagekit";
-
-// Initialize ImageKit (do this outside the function to reuse the instance)
-const imagekit = new ImageKit({
-  publicKey: process.env.IMAGEKIT_PUBLIC_KEY!,
-  privateKey: process.env.IMAGEKIT_PRIVATE_KEY!,
-  urlEndpoint: process.env.IMAGEKIT_URL_ENDPOINT!,
-});
+import { uploadToImageKit } from "../../lib/imageKit";
 
 // Schema for answer data
 const answerSchema = z.object({
@@ -51,27 +44,6 @@ function validateFormData(formData: FormData) {
 }
 
 // Handle file upload to ImageKit
-async function uploadToImageKit(
-  file: File,
-  leagueSlug: string,
-  questionNumber: number
-): Promise<{ url: string; type: string }> {
-  // Convert File to base64
-  const buffer = await file.arrayBuffer();
-  const base64 = Buffer.from(buffer).toString("base64");
-
-  const result = await imagekit.upload({
-    file: base64,
-    fileName: `answer-${questionNumber}-${Date.now()}`,
-    folder: `/answers/${leagueSlug}`,
-    useUniqueFileName: true,
-  });
-
-  return {
-    url: result.url,
-    type: file.type,
-  };
-}
 
 // Database operation
 async function prismaUpsertAnswer(
@@ -80,18 +52,52 @@ async function prismaUpsertAnswer(
   questionNumber: number,
   creatorId: string
 ) {
+  const league = await prisma.league.findUnique({
+    where: {
+      slug: leagueSlug,
+    },
+  });
+
+  if (!league) {
+    throw new Error("No league found for the given slug");
+  }
+
+  const question = await prisma.question.findUnique({
+    where: {
+      leagueId_number: {
+        leagueId: league.id,
+        number: questionNumber,
+      },
+    },
+  });
+  if (!question) {
+    throw new Error(
+      "No question found for the given league and question number"
+    );
+  }
+
   return prisma.answer.upsert({
     where: {
-      leagueSlug_questionNumber: {
-        leagueSlug,
-        questionNumber,
-      },
+      leagueId: league.id,
+      questionId: question?.id,
     },
     create: {
       ...data,
-      leagueSlug,
-      questionNumber,
-      creatorId,
+      creator: {
+        connect: {
+          id: creatorId,
+        },
+      },
+      question: {
+        connect: {
+          id: question.id,
+        },
+      },
+      league: {
+        connect: {
+          id: league.id,
+        },
+      },
     },
     update: data,
   });
@@ -119,11 +125,14 @@ export async function upsertAnswer(
 
     // Handle file upload if present
     const file = formData.get("file") as File;
+
+    // TODO: De-duplicate file uploads
+
     if (file?.size > 0) {
       const { url, type } = await uploadToImageKit(
         file,
-        leagueSlug,
-        parseInt(questionNumber || "0")
+        `answer-${questionNumber}-${Date.now()}`,
+        `answer/${leagueSlug}`
       );
       data = {
         ...data,
@@ -139,7 +148,6 @@ export async function upsertAnswer(
       parseInt(questionNumber || "0"),
       session.user.id
     );
-
     revalidatePath(`/league/${leagueSlug}/questions/${questionNumber}/answer`);
     return { id: answer.id };
   } catch (error) {

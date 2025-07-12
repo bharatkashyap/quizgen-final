@@ -26,13 +26,13 @@ export function AccountMenu({ session }: AccountMenuProps) {
       </Menu.Trigger>
 
       <Menu.Portal>
-        <Menu.Positioner sideOffset={8}>
+        <Menu.Positioner sideOffset={8} collisionPadding={32} className="z-20">
           <Menu.Popup
             className="min-w-[220px] rounded-md p-2 
             bg-white/50 dark:bg-gray-900/50 
             border border-gray-200 dark:border-gray-800
-            shadow-sm backdrop-blur-sm
-            focus:outline-none"
+            shadow-sm backdrop-blur-sm            
+            focus:outline-none z-20"
           >
             <div className="px-2 py-1.5 border-b mb-1">
               <p className="text-sm font-medium">{session.user?.name}</p>

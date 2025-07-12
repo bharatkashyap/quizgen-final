@@ -58,7 +58,7 @@ export function LeagueList() {
         </button>
       </div>
 
-      {!session?.user && publicLeagues?.length ? (
+      {publicLeagues?.length ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {publicLeagues.map((league) => (
             <LeagueCard key={league.id} league={league} />

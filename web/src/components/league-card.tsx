@@ -1,5 +1,6 @@
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import type { League } from "../types/league";
 import { useSession } from "next-auth/react";
 
@@ -37,11 +38,15 @@ export default function LeagueCard({ league }: LeagueCardProps) {
     >
       <div className="aspect-video w-full bg-gray-100 dark:bg-gray-800 relative">
         {league.previewImageUrl ? (
-          <img
-            src={league.previewImageUrl}
-            alt={league.name}
-            className="w-full h-full object-cover"
-          />
+          <div className="relative h-36 md:h-54 lg:h-72 rounded-lg overflow-hidden">
+            <Image
+              src="https://ik.imagekit.io/dailyquizquestion/dqq_cover?updatedAt=1751118980022"
+              alt="Daily Quiz Preview"
+              fill
+              className="object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-blue-950/80 to-transparent" />
+          </div>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-gray-600">
             No preview image

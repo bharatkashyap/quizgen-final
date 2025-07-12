@@ -23,6 +23,7 @@
     "@tiptap/react": "^2.10.4",
     "@tiptap/starter-kit": "^2.10.4",
     "clsx": "^2.1.1",
+    "framer-motion": "^12.23.0",
     "imagekit": "^6.0.0",
     "lucide-react": "^0.468.0",
     "motion": "latest",
