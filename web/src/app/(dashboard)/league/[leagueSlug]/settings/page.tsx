@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { AlertDialog } from "@base-ui-components/react/alert-dialog";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+import { useLeague } from "../../../../../hooks";
 
 function DeleteButton() {
   const { pending } = useFormStatus();
@@ -23,14 +25,31 @@ function DeleteButton() {
 export default function LeagueSettingsPage({
   params,
 }: {
-  params: { leagueSlug: string };
+  params: Promise<{ leagueSlug: string }>;
 }) {
   const router = useRouter();
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+  const { data: session } = useSession();
+  const [leagueSlug, setLeagueSlug] = React.useState<string>("");
+
+  React.useEffect(() => {
+    params.then((p) => setLeagueSlug(p.leagueSlug));
+  }, [params]);
+
+  const { data: league } = useLeague(leagueSlug);
+
+  React.useEffect(() => {
+    if (league && session && league.creatorId !== session.user?.id) {
+      router.push(`/league/${leagueSlug}/questions`);
+    }
+  }, [league, session, router, leagueSlug]);
+
+  if (!league || !session || league.creatorId !== session.user?.id) {
+    return null;
+  }
 
   async function handleSubmit(formData: FormData) {
-    const slug = (await params).leagueSlug;
-    const response = await updateLeague(slug, formData);
+    const response = await updateLeague(leagueSlug, formData);
     if (!response.slug && response.message) {
       toast.error(response.message);
     } else if (response.slug && response.message) {
@@ -40,8 +59,7 @@ export default function LeagueSettingsPage({
   }
 
   async function handleDelete(formData: FormData) {
-    const slug = (await params).leagueSlug;
-    await deleteLeague(slug);
+    await deleteLeague(leagueSlug);
     router.push("/leagues");
     router.refresh();
   }

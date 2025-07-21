@@ -112,3 +112,14 @@ export function useAnswer(
       )
     : { data: undefined, isLoading: false };
 }
+
+export function useLeagueSubmissions(
+  leagueSlug: string,
+  options?: QueryObserverOptions<Record<number, Submission>>
+) {
+  return useFetch<Record<number, Submission>>(
+    `/api/league/${leagueSlug}/submissions`,
+    [`submissions/${leagueSlug}`],
+    options
+  );
+}

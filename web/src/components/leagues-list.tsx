@@ -65,26 +65,6 @@ export function LeagueList() {
           ))}
         </div>
       ) : null}
-
-      {session?.user && !leagues?.length ? (
-        <div className="text-center py-12">
-          <p className="text-gray-500 dark:text-gray-400 mb-4">
-            You haven't created any leagues yet.
-          </p>
-          <Link
-            href="/league/new"
-            className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-          >
-            Create your first league →
-          </Link>
-        </div>
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {leagues?.map((league) => (
-            <LeagueCard key={league.id} league={league} />
-          ))}
-        </div>
-      )}
     </div>
   );
 }

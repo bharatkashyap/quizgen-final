@@ -4,6 +4,7 @@ import { Plus, Lock } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "./ui/skeleton";
 import { useLeague, useQuestions } from "../hooks";
+import { useLeagueSubmissions } from "../hooks";
 import LeagueNotFound from "./league-not-found";
 import { QuestionPreview } from "./question-preview";
 import { useSession } from "next-auth/react";
@@ -15,12 +16,14 @@ export function QuestionList({ leagueSlug }: { leagueSlug: string }) {
   const { data: session } = useSession();
   const { data: league } = useLeague(leagueSlug);
   const { data: questions, isLoading } = useQuestions(leagueSlug);
-  const [showIntroModal, setShowIntroModal] = React.useState(true);
 
   const isCreator = React.useMemo(
     () => league?.creatorId === session?.user?.id,
     [league, session]
   );
+
+  const { data: submissions } = useLeagueSubmissions(leagueSlug);
+  const [showIntroModal, setShowIntroModal] = React.useState(true);
 
   React.useEffect(() => {
     if (league?.showIntro) {
@@ -120,6 +123,12 @@ export function QuestionList({ leagueSlug }: { leagueSlug: string }) {
           questions?.map((question) => {
             const unlockDate = getUnlockDate(question);
             const locked = isLocked(unlockDate);
+            const submission = submissions?.[question.number || 0];
+            const submissionStatus = submission
+              ? submission.isCorrect
+                ? "correct"
+                : "incorrect"
+              : "none";
             return (
               <div
                 key={question.id}
@@ -138,6 +147,9 @@ export function QuestionList({ leagueSlug }: { leagueSlug: string }) {
                   question={question}
                   computedUnlockAt={unlockDate}
                   leagueSlug={leagueSlug}
+                  submissionStatus={
+                    submissionStatus as "correct" | "incorrect" | "none"
+                  }
                   className={`mx-3
                     ${locked ? "blur-[2px] pointer-events-none" : ""}
                     transition-all duration-200
